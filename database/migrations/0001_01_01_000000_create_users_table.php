@@ -21,6 +21,11 @@ return new class extends Migration
             $table->string('country_code', 10)->nullable();
             $table->string('phone_number', 15)->nullable();
             $table->string('profile_picture')->nullable();
+            $table->string('license')->nullable();
+            $table->string('national_id')->nullable();
+            $table->string('technical_inspection_certificate')->nullable();
+            $table->string('registration_certificate')->nullable();
+            $table->string('insurance')->nullable();
             $table->longText('bio')->nullable();
             $table->double('rating')->nullable();
             $table->integer('role_id')->default(1)->nullable()->comment('1-User, 2-Admin');

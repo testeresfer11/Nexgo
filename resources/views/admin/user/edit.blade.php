@@ -86,6 +86,7 @@
                                 <div class="col-md-6">
                                     <label>Profile upload</label>
                                     <div class="input-group col-xs-12">
+                                        
                                         <input type="file" name="profile_picture" class="form-control file-upload-info" placeholder="Upload Image" accept="image/*" onchange="previewImage(event)">
                                     </div>
                                 </div>
@@ -113,6 +114,73 @@
                             </div>
                         </div>
                         @endif
+                        <div class="form-group">
+                                <div class="row">
+                                    <!-- Driver's License -->
+                                    <div class="col-md-6">
+                                        <label>Driver's License</label>
+                                        <input type="file" name="license" class="form-control file-upload-info" accept="image/*">
+                                        @if($user->license)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/users/'.$user->license) }}" width="100" alt="License">
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <!-- National ID / Passport -->
+                                    <div class="col-md-6">
+                                        <label>National ID / Passport</label>
+                                        <input type="file" name="national_id" class="form-control file-upload-info" accept="image/*">
+                                        @if($user->national_id)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/users/'.$user->national_id) }}" width="100" alt="National ID">
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <!-- Technical Inspection Certificate -->
+                                    <div class="col-md-6">
+                                        <label>Technical Inspection Certificate</label>
+                                        <input type="file" name="technical_inspection_certificate" class="form-control file-upload-info" accept="image/*">
+                                        @if($user->technical_inspection_certificate)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/users/'.$user->technical_inspection_certificate) }}" width="100" alt="Inspection Cert">
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <!-- Registration Certificate -->
+                                    <div class="col-md-6">
+                                        <label>Registration Certificate</label>
+                                        <input type="file" name="registration_certificate" class="form-control file-upload-info" accept="image/*">
+                                        @if($user->registration_certificate)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/users/'.$user->registration_certificate) }}" width="100" alt="Registration Cert">
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <!-- Insurance -->
+                                    <div class="col-md-6">
+                                        <label>Insurance</label>
+                                        <input type="file" name="insurance" class="form-control file-upload-info" accept="image/*">
+                                        @if($user->insurance)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/users/'.$user->insurance) }}" width="100" alt="Insurance">
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                         <button type="submit" class="btn btn-primary mr-2">Update</button>
                     </form>
                 </div>

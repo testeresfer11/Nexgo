@@ -68,8 +68,10 @@
                                                 <i id="flag-icon" class="flag-icon flag-icon-us"></i> <!-- Default flag is US -->
                                             </div>
                                         </div>
+
                                         <input type="tel" id="phone" name="phone_number" class="form-control @error('phone_number') is-invalid @enderror" placeholder="Enter phone number" value="{{ old('phone_number') }}">
-                                        <input type="hidden" name="country_code" id="country_code">
+                                         <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code') }}">
+                                        <input type="hidden" name="country_shortname" id="country_shortname" value="{{ old('country_shortname') }}">
                                     </div>
                                     @error('phone_number')
                                     <span class="invalid-feedback" role="alert">
@@ -102,16 +104,56 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label>Profile Upload</label>
-                                    <div class="input-group col-xs-12">
-                                        <input type="file" name="profile_picture" class="form-control file-upload-info" placeholder="Upload Image" accept="image/*">
+                     
+                          <div class="form-group">
+                                <div class="row">
+                                    <!-- Profile Picture -->
+                                    <div class="col-md-6">
+                                        <label for="profile_picture">Profile Picture</label>
+                                        <input type="file" name="profile_picture" class="form-control file-upload-info" accept="image/*">
+                                    </div>
+
+                                    <!-- Driver's License -->
+                                    <div class="col-md-6">
+                                        <label for="license">Driver's License</label>
+                                        <input type="file" name="license" class="form-control file-upload-info" accept="image/*">
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <!-- National ID / Passport -->
+                                    <div class="col-md-6">
+                                        <label for="national_id">National ID / Passport</label>
+                                        <input type="file" name="national_id" class="form-control file-upload-info" accept="image/*">
+                                    </div>
+
+                                    <!-- Technical Inspection Certificate -->
+                                    <div class="col-md-6">
+                                        <label for="technical_inspection_certificate">Technical Inspection Certificate</label>
+                                        <input type="file" name="technical_inspection_certificate" class="form-control file-upload-info" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <!-- Registration Certificate -->
+                                    <div class="col-md-6">
+                                        <label for="registration_certificate">Registration Certificate</label>
+                                        <input type="file" name="registration_certificate" class="form-control file-upload-info" accept="image/*">
+                                    </div>
+
+                                    <!-- Insurance -->
+                                    <div class="col-md-6">
+                                        <label for="insurance">Insurance</label>
+                                        <input type="file" name="insurance" class="form-control file-upload-info" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+
+
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-12">
@@ -223,23 +265,39 @@
             }
         });
 
-        // Custom method to check for spaces
         $.validator.addMethod("noSpace", function(value, element) {
             return value.trim().length !== 0;
         }, "Spaces are not allowed");
 
-        var input = document.querySelector("#phone");
-        window.intlTelInput(input, {
-            initialCountry: 'au', // Default country
-            separateDialCode: true,
-            utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js', // Path to utils.js    
-        });
+   var input = document.querySelector("#phone");
+    var iti = window.intlTelInput(input, {
+        initialCountry: 'au',
+        separateDialCode: true,
+        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
+    });
 
-        // Update flag icon based on selected country
-        $('#phone').on('countrychange', function() {
-            var countryCode = $('.iti__selected-dial-code').html();
-            $('#country_code').val(countryCode);
-        });
+    // Update hidden input and flag icon when the country changes
+    input.addEventListener('countrychange', function() {
+        var countryData = iti.getSelectedCountryData();
+        $('#country_code').val('+' + countryData.dialCode);
+        $('#country_shortname').val(countryData.iso2);
+        $('#flag-icon').removeClass().addClass('flag-icon flag-icon-' + countryData.iso2);
+    });
+
+  $(document).ready(function() {
+
+    var initialCountryCode = '{{ old('country_code') }}';
+    var initialPhoneNumber = '{{ old('phone_number') }}';
+
+    if (initialCountryCode) {
+    iti.setNumber(initialCountryCode);
+    }
+
+    if (initialPhoneNumber) {
+        iti.setNumber(initialPhoneNumber);
+    }
+});
+    ;
 
     });
 </script>
