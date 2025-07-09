@@ -53,9 +53,6 @@
                                         <th> User </th>
                                          <th> Email </th>
                                         <th> Amount </th>
-                                         <th> Platform fee (%)</th>
-                                          <th>final Amount </th>
-                                           <th>Payout Amount</th>
                                         <th> Action </th>
                                     </tr>
                                 </thead>
@@ -66,11 +63,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $payout->driver_name ?? 'N/A' }}</td>
                                              <td>{{ $payout->driver_email ?? 'N/A' }}</td>
-                                             <td>${{ number_format($payout->total) }}</td>
-                                               <td>{{ $payout->platform_fee ?? 'N/A' }}</td>
-                                            
-                                             <td>${{ number_format($payout->amount) }}</td>
-                                             <td>${{ number_format($payout->amount_paid_by_admin) }}</td>
+                                            <td>${{ number_format($payout->amount, 2) }}</td>
                                             
                                             <td >
                                             <div class="pay-out-btn">
@@ -110,22 +103,6 @@
                             <input type="text" id="payment_method" name="payment_method" class="form-control" disabled>
                         </div>
                         <div class="form-group">
-                            <label for="payment_method">Amount</label>
-                            <input type="text" id="total_amount" name="payment_method" class="form-control" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="payment_method">Platform fee(%)</label>
-                            <input type="text" id="Platform_fee" name="payment_method" class="form-control" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="payment_method">Final Amount</label>
-                            <input type="text" id="final_amount" name="payment_method" class="form-control" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="payment_method">Payout Amount</label>
-                            <input type="text" id="payout_amount" name="payment_method" class="form-control" disabled>
-                        </div>
-                        <div class="form-group">
                             <label class="payment_date">Date</label>
                             <input type="date" id="payment_date" name="payment_date" class="form-control" disabled>
                         </div>
@@ -160,12 +137,8 @@
             $("#payout_id").val(response.id);
             $("#payment_slip").val(response.payment_slip);
             $("#payment_method").val(response.payment_method);
-            $("#Platform_fee").val(response.platform_fee);
-            $("#total_amount").val(response.total);
-            $("#payout_amount").val(response.amount_paid_by_admin);
-             $("#final_amount").val(response.amount);
             $("#payment_date").val(response.payment_date);
-            $("#payment_slip_preview").attr('src', 'https://ride.drivvy.com.au/storage/payment/' + response.payment_slip).show(); // Use '/storage/payment/' to access the symlinked path
+            $("#payment_slip_preview").attr('src', 'https://normy.esferasoft.in/storage/payment/' + response.payment_slip).show(); // Use '/storage/payment/' to access the symlinked path
             $('#paymentModal').modal('show');
         },
         error: function() {

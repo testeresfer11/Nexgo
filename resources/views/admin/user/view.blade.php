@@ -275,7 +275,7 @@
                                             <td>{{$ride->departure_time}}</td>
                                             <td>{{$ride->arrival_time}}</td>
                                             <td>{{$ride->available_seats}}</td>
-                                            <td>{{ $ride->seat_left}}</td>
+                                            <td>{{ $ride->seat_booked == 4 ? 'Full' : $ride->seat_booked }}</td>
                                             <td>
                                             <span class="menu-icon">
                                                 <a href="{{route('admin.ride.view',['id' => $ride->ride_id])}}" title="View" class="text-primary"><i class="mdi mdi-eye"></i></a>

@@ -94,7 +94,7 @@ body {
           <div class="row">
             <div class="col-lg-7">
               <div class="divvy-title mt-5">
-                <h1 class="logo-color fw-700">Drivvy</h1>
+                <h1 class="logo-color fw-700">Nexgo</h1>
               </div>
              
             </div>
@@ -115,11 +115,11 @@ body {
                     </div>
                   </div>
                   <div class="please-text mt-5">
-                    <p class="mb-0 color-80 f-20">Open the Drivvy app, select your ride, and<br>
+                    <p class="mb-0 color-80 f-20">Open the Nexgo app, select your ride, and<br>
                          scroll to the bottom to find the <span class="f-bold">Rate the Ride</span><br> feature.</p>
                   </div>
                <div class="ready-drive text-center my-5 py-5 border-top">
-                <h4 class="f-bold">Ready to Drivvy?</h4>
+                <h4 class="f-bold">Ready to Nexgo?</h4>
                </div>
               </div>
             </div>

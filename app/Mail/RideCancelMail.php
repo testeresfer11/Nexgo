@@ -12,33 +12,30 @@ use Illuminate\Queue\SerializesModels;
 class RideCancelMail extends Mailable
 {
     use Queueable, SerializesModels;
-    
+     public $driver;
         public $ride;
         public $booking;
-         public $driver;
         public $refundAmount;
 
     /**
      * Create a new message instance.
      */
-    public function __construct( $ride, $booking,$driver,$refundAmount)
+    public function __construct($driver, $ride, $booking,$refundAmount)
     {
-        
+         $this->driver = $driver;
         $this->ride = $ride; // Assuming this is the ride details object
         $this->booking = $booking;
-         $this->driver = $driver;
         $this->amount = $refundAmount;
     }
 
      public function build()
     {
-      return $this->subject('Drivvy - Ride cancelled')
+      return $this->subject('Nexgo - Ride cancelled')
                 ->view('emails.RideCancel')
                 ->with([
-                   
+                    'driver' => $this->driver,
                     'rideDetails' => $this->ride,
                     'booking' => $this->booking,
-                     'driver' => $this->driver,
                     'amount' => $this->refundAmount,
                 ]);
     }

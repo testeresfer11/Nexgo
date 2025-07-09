@@ -21,7 +21,7 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{asset('admin/css/style.css')}}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{url('/')}}/storage/logo/Drivvy_pictogram_logo.png" />
+    <link rel="shortcut icon" href="{{url('/')}}/storage/logo/Nexgo_pictogram_logo.png" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"  />
 
@@ -65,7 +65,7 @@
                 {{-- footer section start --}}
                 <footer class="footer">
                     <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Drivvy {{date('Y')}}</span>
+                      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Nexgo {{date('Y')}}</span>
                     </div>
                 </footer>
                 {{-- end footer section --}}

@@ -16,7 +16,7 @@ return [
         "CHANGED_DONE"      => "has been changed successfully.",
         "DELETE_DONE"       => "has been deleted successfully.",
         "FETCH_DONE"        => "fetched successfully.",
-        "VERIFY_SEND"       => "has been created successfully. Please check your email and verify email address",
+        "VERIFY_SEND"       => "has been created successfully.Please check your email and verify email address",
         "VERIFY_DONE"       => "has been verified successfully.",
         "LOGIN"             => "Login successfully.",
         "SENT_DONE"         => "has been sent successfully.",

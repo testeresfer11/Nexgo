@@ -112,7 +112,7 @@ select.form-control {
 
                                 <td class="mw">{{ $data->ride->arrival_city }} - {{ $data->ride->departure_city }}</td>
                                 <td>{{ $data->passenger->first_name ?? 'N/A' }}</td>
-                                <td>{{ $data->driver->first_name ?? 'N/A' }}</td>
+                                <td>{{ $data->driver->first_name }}</td>
                                 <td>{{ $data->report->type }}</td>
                                <td >{{ $data->description }}</td>
 

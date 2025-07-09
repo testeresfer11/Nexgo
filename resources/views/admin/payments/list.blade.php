@@ -73,59 +73,48 @@
 
           </div>
           <div class="table-responsive">
-           <table class="table table-striped" id="filterData">
-                <thead>
-                    <tr>
-                        <th> Sr No. </th>
-                        <th> Passenger Name</th>
-                        <th> Ride ID </th>
-                        <th> Booking ID </th>
-                        <th> Amount </th>
-                        <th> Payment Date</th>
-                        <th> Payment Method</th>
-                        <th> Status</th>
-                        <th> Seat Request Status</th>
-                        <th> Automatic Refund Processed</th>
-                        <th> Passenger Cancel > 24hrs</th>
-                        <th> Passenger Cancel < 24hrs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($payments as $key => $payment)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $payment->first_name ?? 'N/A' }}</td>
-                            <td><a href="{{ route('admin.ride.view', $payment->ride_id) }}">{{ $payment->ride_id }}</a></td>
-                            <td>{{ $payment->booking_id }}</td>
-                            <td>${{ number_format($payment->amount, 2) }}</td>
-                            <td>{{ convertDate($payment->payment_date) }}</td>
-                            <td>{{ $payment->payment_method }}</td>
-                            <td>
-                                @if ($payment->status === 'COMPLETED')
-                                    Succeeded
-                                @else
-                                    {{ $payment->status }}
-                                @endif
-                            </td>
-                            <td>{{ $payment->booking_status }}</td>
-                            <td>
-                                @if (in_array($payment->booking_status, ['confirm', 'completed', 'pending']))
-                                    NA
-                                @else
-                                    {{ $payment->is_automatic_refunded == 1 ? 'Yes' : 'No' }}
-                                @endif
-                            </td>
-                            <td>{{ $payment->cancel_before_24 == 1 ? 'Yes' : 'No' }}</td>
-                            <td>{{ $payment->cancel_after_24 == 1 ? 'Yes' : 'No' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="12" class="no-record"> <center>No record found </center></td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <table class="table table-striped" id="filterData">
+              <thead>
+                <tr>
+                <th> Sr No. </th>
+                  <th> Passenger Name</th>
+                  <th> Ride ID </th>
+                  <th> Booking ID </th>
+                  <th> Amount </th>
+                  <th> Payment Date</th>
+                  <th> Payment Method</th>
+                  <th> Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                @forelse ($payments as $key => $payment)
+                  
+                  <tr>
+                    <td>{{$key+1}}</td>
+                    <td> {{$payment->first_name}} </td>
+                    <td> <a href="{{route('admin.ride.view',$payment->ride_id)}}">  {{$payment->ride_id}} </a> </td>
+                    <td>{{$payment->booking_id}}</td>
+                  <td>${{ number_format($payment->amount, 2) }}</td>
 
+                    <td>{{convertDate($payment->payment_date)}}</td>
+                    <td>{{$payment->payment_method}}</td>
+                  <td>
+                   
+                    @if($payment->status === 'COMPLETED')
+                        succeeded
+                      @else
+                       {{ $payment->status }}
+                    @endif
+                </td>
+                  </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="no-record"> <center>No record found </center></td>
+                </tr>
+                @endforelse
+              </tbody>
+            </table>
           </div>
           <div class="custom_pagination">
              {{ $payments->appends(request()->except('page'))->links('pagination::bootstrap-4') }}

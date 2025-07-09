@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `drivvy-ride`
+-- Database: `Nexgo-ride`
 --
 
 -- --------------------------------------------------------
@@ -360,7 +360,7 @@ CREATE TABLE `general_settings` (
 --
 
 INSERT INTO `general_settings` (`id`, `site_name`, `logo`, `email`, `country_code`, `phone`, `address`, `created_at`, `updated_at`, `commission`, `platform_fee`, `per_km_price`, `app_url`, `google_url`) VALUES
-(1, 'Drivvy', '1726138425.png', 'contact@drivvy.com.au', NULL, '07009951634', NULL, '2024-09-12 05:23:45', '2024-12-08 16:33:59', NULL, '15', '0.06', NULL, NULL);
+(1, 'Nexgo', '1726138425.png', 'contact@Nexgo.com.au', NULL, '07009951634', NULL, '2024-09-12 05:23:45', '2024-12-08 16:33:59', NULL, '15', '0.06', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1157,7 +1157,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `email_verified_at`, `password`, `country_code`, `phone_number`, `profile_picture`, `bio`, `rating`, `role_id`, `join_date`, `status`, `phone_otp`, `last_login`, `deleted_at`, `remember_token`, `created_at`, `updated_at`, `first_name`, `last_name`, `dob`, `id_card`, `verify_id`, `chattiness`, `music`, `smoking`, `pets`, `phone_verfied_at`, `phone_otp_expires_at`, `customer_id`, `stripe_connect_account_id`, `fcm_token`, `device_type`, `provider`, `provider_id`, `is_notification_ride`, `is_notification_plan`, `is_notification_message`, `is_email_plan`, `is_email_message`) VALUES
-(1, 'admin@yopmail.com', NULL, '$2y$12$WUzvsNdGifYTNjKlLUEaseMKp6pCCfw6uEDrAd4HOqLdPnPG2yw8C', NULL, '7584896584', '1726138684.png', 'This is a Test Descriptions', NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, '2024-07-23 22:43:30', '2024-11-23 20:12:01', 'Drivvy', 'Admin', NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0),
+(1, 'admin@yopmail.com', NULL, '$2y$12$WUzvsNdGifYTNjKlLUEaseMKp6pCCfw6uEDrAd4HOqLdPnPG2yw8C', NULL, '7584896584', '1726138684.png', 'This is a Test Descriptions', NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, '2024-07-23 22:43:30', '2024-11-23 20:12:01', 'Nexgo', 'Admin', NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0),
 (282, 'johnson@yopmail.com', NULL, '$2y$12$q4nDuf4HviSzffS96CFT9OHXiLUc.a2smgrqbyX4bcX1.KwIQXFyy', NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, '2024-12-03 18:54:45', '2024-12-03 18:54:45', 'Michal', 'Johnson', '1998-12-03', NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0),
 (283, 'michal@yopmail.com', NULL, '$2y$12$XV3Q2iBEbXid4Imu7xG5.u2rF/AiLt0qIAxd5OrKpsRwJxzO4xwKa', NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, '2024-12-03 18:57:15', '2024-12-05 12:09:48', 'Michal', 'Johnson', '1998-12-03', NULL, '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0),
 (284, 'michal1@yopmail.com', NULL, '$2y$12$zZgiHf2I1EDBXC.OOd.qAeGetq6aDuTT1FTr/akH23IgYqdqg7EXW', NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, '2024-12-03 18:58:32', '2024-12-03 18:58:32', 'Michal', 'Johnson', '1998-12-03', NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0),

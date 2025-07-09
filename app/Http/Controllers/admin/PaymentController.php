@@ -50,7 +50,7 @@ class PaymentController extends Controller
 
             // Get the results with pagination
             $payments = $query->paginate(10);
-         
+
             // Return the view with the filtered payments data
             return view("admin.payments.list", compact("payments"));
         } catch (\Exception $e) {

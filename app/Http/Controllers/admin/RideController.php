@@ -229,10 +229,10 @@ public function getList(Request $request)
                 'reviews.rating' // Rating will be null if no review exists
             )
             ->where('rides.ride_id', $id)
-            ->whereIn('bookings.status', ['confirmed','completed']) // Add this condition for confirmed bookings
+            ->where('bookings.status', 'confirmed') // Add this condition for confirmed bookings
             ->paginate(4);
 
-           // return $passengers;
+            
 
             return view("admin.ride.view",compact("ride","passengers"));
         }catch(\Exception $e){

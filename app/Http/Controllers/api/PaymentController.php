@@ -281,13 +281,33 @@ class PaymentController extends Controller
                             $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
                         }
                     }
-                    
+                    /*if ($booking) {
+                        $booking->status = 'pending'; // Set the status to confirmed
+                        $booking->save(); // Save the changes to the database
+
+                        // Calculate the new seat count
+
+                    }*/
+
 
                     $createdAt = $booking->created_at;
                     $departureTime = $ride->departure_time;
 
                     // Calculate time difference in minutes
                     $timeDifferenceInMinutes = $createdAt->diffInMinutes($departureTime, false);
+
+                    // Determine the time before departure based on the calculated difference
+                    /*if ($timeDifferenceInMinutes > 720) { // More than 12 hours
+                        $adjustedTime = Carbon::parse($createdAt)->subHours(3);
+                    } elseif ($timeDifferenceInMinutes > 180) { // Between 12 hours and 3 hours
+                        $adjustedTime = Carbon::parse($createdAt)->subHour(1);
+                    } elseif ($timeDifferenceInMinutes > 30) { // Between 3 hours and 30 minutes
+                        $adjustedTime = Carbon::parse($createdAt)->subMinutes(15);
+                    } elseif ($timeDifferenceInMinutes > 15) { // Between 30 minutes and 15 minutes
+                        $adjustedTime = Carbon::parse($createdAt)->subMinutes(5);
+                    } else {
+                        $adjustedTime = $createdAt; // Too close to departure, use departure time directly
+                    }*/
 
 
                         if ($timeDifferenceInMinutes > 720) { // More than 12 hours
@@ -309,7 +329,23 @@ class PaymentController extends Controller
 
 
                     // Notification to user 
-                   
+                    $notificationData = [
+                        'title' => 'Ride Request',
+                        'body' => 'Your ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent to the driver successfully.',
+                        'type' => 'ride_request',
+                        'ride_id' => $ride->ride_id
+                    ];
+
+                    // Send push notification if FCM token is available
+                    $fcm_token = Auth::user()->fcm_token;
+                    $device_type = Auth::user()->device_type;
+                    if ($fcm_token) {
+                        if ($device_type === 'ios' && Auth::user()->is_notification_ride == 1) {
+                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        } else {
+                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        }
+                    }
 
 
                     $driver = User::where('user_id', $ride->driver_id)->first();
@@ -318,7 +354,25 @@ class PaymentController extends Controller
                   
                     \Mail::to($user->email)->send(new \App\Mail\PaymentReciptMail($driver, $ride, $booking, $payment));
                     // Notification to driver 
-                
+                    $notificationData = [
+                        'title' => 'Ride Request',
+                        'body' => 'New ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent by user ' . Auth::user()->email,
+                        'type' => 'ride_request',
+                        'ride_id' => $ride->ride_id,
+                    ];
+
+                    // Send push notification if FCM token is available
+                    $user = User::where('user_id', $booking->passenger_id)->first();
+
+                    $fcm_token = $driver->fcm_token;
+                    $device_type = $driver->device_type;
+                    if ($fcm_token) {
+                        if ($device_type === 'ios' && $driver->is_notification_ride == 1) {
+                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        } else {
+                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        }
+                    }
                 } else {
 
 
@@ -352,43 +406,6 @@ class PaymentController extends Controller
 
                     \Mail::to($user->email)->send(new \App\Mail\PaymentReciptMail($driver, $ride, $booking, $payment));
                     \Mail::to($user->email)->send(new \App\Mail\BookingAwating($driver, $ride, $booking, $payment, $formattedAdjustedTime));
-                     $notificationData = [
-                        'title' => 'Ride Request',
-                        'body' => 'Your ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent to the driver successfully.',
-                        'type' => 'ride_request',
-                        'ride_id' => $ride->ride_id
-                    ];
-
-                    // Send push notification if FCM token is available
-                    $fcm_token = Auth::user()->fcm_token;
-                    $device_type = Auth::user()->device_type;
-                    if ($fcm_token) {
-                        if ($device_type === 'ios' && Auth::user()->is_notification_ride == 1) {
-                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                        } else {
-                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                        }
-                    }
-
-                        $notificationData = [
-                        'title' => 'Ride Request',
-                        'body' => 'New ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent by user ' . Auth::user()->email,
-                        'type' => 'ride_request',
-                        'ride_id' => $ride->ride_id,
-                    ];
-
-                    // Send push notification if FCM token is available
-                    $user = User::where('user_id', $booking->passenger_id)->first();
-                    $driver = User::where('user_id', $ride->driver_id)->first();
-                    $fcm_token = $driver->fcm_token;
-                    $device_type = $driver->device_type;
-                    if ($fcm_token) {
-                        if ($device_type === 'ios' && $driver->is_notification_ride == 1) {
-                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                        } else {
-                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                        }
-                    }
                 }
 
 
@@ -403,12 +420,12 @@ class PaymentController extends Controller
 
         } catch (\Stripe\Exception\ApiErrorException $e) {
             \Log::error('Stripe error:', ['error' => $e->getMessage()]);
-            return $this->apiResponse('error', 400, 'Something went wrong, please check your card details!');
+            return $this->apiResponse('error', 400, 'Stripe error: ' . $e->getMessage());
         } catch (\Exception $e) {
             if ($e->getMessage() == "Requested entity was not found.") {
                 return $this->apiResponse('success', 200, 'Payment successful');
             }
-            
+            return $e;
             \Log::error('General error:', ['error' => $e->getMessage()]);
             return $this->apiResponse('error', 500, 'An error occurred: ' . $e->getMessage());
         }

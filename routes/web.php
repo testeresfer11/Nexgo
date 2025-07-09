@@ -115,15 +115,8 @@ Route::group(['prefix' =>'admin'],function () {
                     Route::get('completed', 'getCompleted')->name('completed');
                       Route::post('mark-complete', 'UploadPaymentSlip')->name('mark_complete');
                      Route::get('details/{id}','show')->name('details');
-                    Route::get('changeStatus', 'changeStatus')->name('changeStatus');
 
-                    //Refund
-                    Route::get('refund-list', 'pendingRefunds')->name('pending.refund');
-                    Route::get('refund-completed', 'getCompletedRefunds')->name('completed.refund');
-                    Route::post('mark-complete-refund', 'UploadRefundSlip')->name('mark_complete.refund');
-                    Route::get('refund-details/{id}','showRefund')->name('details.refund');
-                
-                     Route::get('changeStatusRefund', 'changeStatusRefund')->name('changeStatusRefund');
+                    Route::get('changeStatus', 'changeStatus')->name('changeStatus');
                   
                 });
 

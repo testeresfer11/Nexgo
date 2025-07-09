@@ -31,7 +31,7 @@ class BookingAwating extends Mailable
 
     public function build()
     {
-        return $this->subject('Ride Request')
+        return $this->subject('Ride Requset')
         ->view('emails.booking_awaiting')
                     ->with([
                     'driver' => $this->driver,

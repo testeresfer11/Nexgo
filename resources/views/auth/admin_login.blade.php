@@ -33,14 +33,14 @@
                 <div class="row w-100 m-0">
                     <div class="col-12 col-md-6">
                         <div class="login-left-icon">
-                            <img src="{{asset('images/carpool_logo.png')}}">
+                            <img src="{{asset('images/carpool_logo.jpg')}}">
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="card">
                             <div class="card-body px-5">
                                 <div class="login-title d-flex align-items-center justify-content-between">
-                                    <p class="f-18">Welcome to <span class="dark bold">Drivvy</span></p>
+                                    <p class="f-18">Welcome to <span class="dark bold">Nexgo</span></p>
                                 </div>
                                 <h2 class="pb-4 f-38">Sign In</h2>
                                 <form action="{{ route('login') }}" method="POST" id="loginForm">
@@ -64,7 +64,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group d-flex align-items-center justify-content-end">
-                                        <div class="forgot"> <a href="/" class="forgot-pass dark text-decoration-none">{{ __('Forgot Password?') }}</a></div>
+                                        <div class="forgot"> <a href="{{route('user.forget-password')}}" class="forgot-pass dark text-decoration-none">{{ __('Forgot Password?') }}</a></div>
                                     </div>
                                      
                                     <div class="text-center">

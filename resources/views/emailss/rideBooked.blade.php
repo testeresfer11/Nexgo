@@ -84,7 +84,7 @@ body {
           <div class="row">
             <div class="col-lg-7">
               <div class="divvy-title mt-5">
-                <h1 class="logo-color fw-700">Drivvy</h1>
+                <h1 class="logo-color fw-700">Nexgo</h1>
               </div>
              
             </div>
@@ -133,7 +133,7 @@ body {
         <h5 class="mb-0 color-80 f-bold">${{ number_format($amount, 2) }}</h5>
       </div>
       <div class="ready-drive text-center border-top my-5 py-5">
-        <h4 class="f-bold">Ready to Drivvy?</h4>
+        <h4 class="f-bold">Ready to Nexgo?</h4>
       </div>
     </div>
   </div>

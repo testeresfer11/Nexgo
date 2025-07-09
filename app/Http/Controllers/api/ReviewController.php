@@ -20,7 +20,7 @@ class ReviewController extends Controller
     public function sendTestNotification()
     {
         $staticData = [
-            'device_token' => 'e-hIBDX1c0Gxl5mhBbiCC2:APA91bGCFApE92h3PlI0xRXc5sIX0BNks3QSfppHRQcli9Hr_3Cy6z9X9PiFRYSTsopJ5mJ0iGMG2BGt2OK0UHfVjhtUgNAFIKx_Ar4G8ZOcIze47idLxpQ', // Replace with an actual device token
+            'device_token' => 'eLASKl46RDubwS1_rInJ1v:APA91bHoDTOdl0gpaRXp1ey9U6ZAob95AnMrP1prCoCzouczIyo8_nb3DLOOqN-uEYQsKSCGyTx_pagVuL-Dvezi_MDdLFbetUSAb8HSXHDDcvlwTPqeFiQu-Fh1LEqpvevJPNSkw2fE', // Replace with an actual device token
             'title' => 'Test Notification',
             'body' => 'This is a test notification.',
             'type' => 'test_type',
@@ -110,7 +110,7 @@ class ReviewController extends Controller
                 
                 // Fetch reviews where the current user is the receiver (driver)
                 $reviews = Reviews::join('rides', 'rides.ride_id', '=', 'reviews.ride_id')
-                    ->join('users', 'users.user_id', '=', 'reviews.reviewer_id')
+                    ->join('users', 'users.user_id', '=', 'reviews.receiver_id')
                     ->select('reviews.*', 'users.first_name','users.last_name','users.profile_picture','users.phone_verfied_at','users.verify_id','users.email_verified_at')
                     ->where('reviews.receiver_id', $user_id) // Filter by the current user's ID
                     ->get();

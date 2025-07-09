@@ -25,7 +25,7 @@ class WelcomeRegistration extends Mailable
     public function build()
     {
         return $this->view('emails.welcome_registration')
-                    ->subject('Welcome to Drivvy')
+                    ->subject('Welcome to Nexgo')
                     ->with(['user' => $this->name]);
     }
 }

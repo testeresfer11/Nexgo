@@ -22,28 +22,28 @@ class PayPalController extends Controller
 
     protected $provider;
 
-      public function __construct(){
-       $this->provider = new PayPalClient;
-       $this->provider = \PayPal::setProvider();
-       
-       $config = [
-           'mode'                      =>  env('PAYPAL_MODE'),
-            env('PAYPAL_MODE')    => [
-               'client_id'         => env('PAYPAL_LIVE_CLIENT_ID'),
-               'client_secret'     => env('PAYPAL_LIVE_CLIENT_SECRET'),
-               'app_id'            => 'APP-80W284485P519543T',
-           ],
-           'payment_action' => 'Sale',
-           'currency'       => 'USD',
-           'locale'         => 'en_US',
-           'notify_url'     => 'https://your-app.com/paypal/notify',
-           'validate_ssl'   => true,
+    public function __construct()
+    {
+        $this->provider = new PayPalClient;
 
-       ];
-       
-       $this->provider->setApiCredentials($config);
-       $this->provider->getAccessToken();
-   }
+        $config = [
+            'mode' => env('PAYPAL_MODE'), // 'sandbox' or 'live'
+            env('PAYPAL_MODE') => [
+                'client_id' => env('PAYPAL_SANDBOX_CLIENT_ID'),
+                'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
+                'app_id' => env('PAYPAL_APP_ID', 'APP-80W284485P519543T'),
+            ],
+            'payment_action' => 'Sale',        // Action type
+            'currency' => 'AUD',         // Currency
+            'locale' => 'en_US',       // Locale
+            'notify_url' => env('PAYPAL_NOTIFY_URL', 'https://your-app.com/paypal/notify'),
+            'validate_ssl' => env('PAYPAL_VALIDATE_SSL', true), // SSL validation
+        ];
+
+        $this->provider->setApiCredentials($config);
+        $this->provider->getAccessToken();
+    }
+
     /**
      * Create a PayPal payment.
      */
@@ -90,7 +90,7 @@ class PayPalController extends Controller
     /**
      * Execute the PayPal payment.
      */
-      public function executePayment(Request $request)
+    public function executePayment(Request $request)
     {
         try {
             $request->validate([
@@ -100,7 +100,7 @@ class PayPalController extends Controller
             ]);
 
             $token = $request->input('token');
-            $bookingId = $request->booking_id;
+            $bookingId = $request->input('booking_id');
 
             // Capture the payment
             $response = $this->provider->capturePaymentOrder($token);
@@ -127,103 +127,64 @@ class PayPalController extends Controller
                 }
 
                 $booking = Bookings::where('booking_id', $bookingId)->first();
-                $ride = Rides::where('ride_id',$booking->ride_id)->first();
-                $driver = User::where('user_id',$ride->driver_id)->first();
-                $user = User::where('user_id', $booking->passenger_id)->first();
-                $payment = Payments::where('booking_id', $bookingId)->first();
+                $ride = Rides::where('ride_id', $booking->ride_id)->first();
 
                 // Adjust the seat count if the payment fails
-           if ($ride->type == 'instant') {
-            $booking = Bookings::where('booking_id', $bookingId)->first();
-                $ride = Rides::where('ride_id',$booking->ride_id)->first();
-                $driver = User::where('user_id',$ride->driver_id)->first();
-                $user = User::where('user_id', $booking->passenger_id)->first();
-                $payment = Payments::where('booking_id', $bookingId)->first();
+                if ($ride->type == 'instant') {
 
-                        try {
-                            if ($booking) {
-                                // Set the status to confirmed
-                                $booking->status = 'confirmed'; 
-                                $booking->save(); // Save the changes to the database
 
-                                // Calculate the new seat count
-                                $newSeatCount = $ride->seat_booked + $booking->seat_count;
+                    if ($booking) {
+                        $booking->status = 'confirmed'; // Set the status to confirmed
+                        $booking->save(); // Save the changes to the database
 
-                                // Update the ride record
-                                $ride->seat_booked = $newSeatCount;
-                                $ride->save();
-                            }
-                            $user = User::where('user_id', $booking->passenger_id)->first();
-                            $notificationData = [
-                                'title' => 'Ride Booked',
-                                'body' => 'Your ride from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been successfully booked.',
-                                'type' => 'ride_booked',
-                                'ride_id' => $ride->ride_id
-                            ];
+                        // Calculate the new seat count
+                        $newSeatCount = $ride->seat_booked + $booking->seat_count;
 
-                            $fcm_token = $user->fcm_token;
-                            $device_type = $user->device_type;
+                        // Update the ride record
+                        $ride->seat_booked = $newSeatCount;
+                        $ride->save();
+                    }
 
-                            // Send push notification to user
-                            if ($fcm_token) {
-                                try {
-                                    if ($device_type === 'ios' && $user->is_notification_ride == 1) {
-                                        $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                                    } else {
-                                        $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                                    }
-                                } catch (\Exception $e) {
-                                    \Log::error("Failed to send push notification to user: " . $e->getMessage());
-                                }
-                            }
+                    $notificationData = [
+                        'title' => 'Ride Booked',
+                        'body' => 'Your ride from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been successfully booked.',
+                        'type' => 'ride_booked',
+                        'ride_id' => $ride->ride_id
+                    ];
 
-                            // Notification to driver
-                            $notificationData = [
-                                'title' => 'Ride Booked',
-                                'body' => 'Ride from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been booked by user ' . $user->email,
-                                'type' => 'ride_booked',
-                                'ride_id' => $ride->ride_id
-                            ];
-
-                            try {
-                                $driver = User::where('user_id', $ride->driver_id)->first();
-                                $amount = $ride->price_per_seat * $booking->seat_count;
-                                $subject = "Ride Booked";
-
-                                // Log and send emails
-                                \Log::info('Sending RideBookedMail email...');
-                                \Mail::to($driver->email)->sendNow(new \App\Mail\RideBookedMail($user, $ride, $booking, $amount, $subject));
-                                \Log::info('RideBookedMail email sent.');
-
-                                \Mail::to($user->email)->sendNow(new \App\Mail\PaymentReciptMail($driver, $ride, $booking, $payment));
-
-                                // Send push notification to driver
-                                $fcm_token = $driver->fcm_token;
-                                if ($fcm_token) {
-                                    try {
-                                        if ($device_type === 'ios' && $driver->is_notification_ride == 1) {
-                                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                                        } else {
-                                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-                                        }
-                                    } catch (\Exception $e) {
-                                        \Log::error("Failed to send push notification to driver: " . $e->getMessage());
-                                    }
-                                }
-                            } catch (\Exception $e) {
-                                \Log::error("Failed to handle driver notifications or emails: " . $e->getMessage());
-                            }
-                        } catch (\Exception $e) {
-                          \Log::error("An error occurred while processing the ride booking: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
-
+                    $fcm_token = Auth::user()->fcm_token;
+                    $device_type = Auth::user()->device_type;
+                    if ($fcm_token) {
+                        if ($device_type === 'ios' && Auth::user()->is_notification_ride == 1) {
+                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        } else {
+                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
                         }
-                    } else {
-                        
-                        $booking = Bookings::where('booking_id', $bookingId)->first();
-                        $ride = Rides::where('ride_id',$booking->ride_id)->first();
-                        $driver = User::where('user_id',$ride->driver_id)->first();
-                        $user = User::where('user_id', $booking->passenger_id)->first();
-                        $payment = Payments::where('booking_id', $bookingId)->first();
+                    }
+
+                    // Notification to driver 
+                    $notificationData = [
+                        'title' => 'Ride Booked',
+                        'body' => 'Ride from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been booked by user ' . Auth::user()->email,
+                        'type' => 'ride_booked',
+                        'ride_id' => $ride->ride_id
+                    ];
+
+                    // Send push notification if FCM token is available
+                    $driver = User::where('user_id', $ride->driver_id)->first();
+                    $amount = $ride->price_per_seat * $booking->seat_count;
+                    $subject = "Ride Booked";
+                    \Mail::to($driver->email)->send(new RideBookedMail($user, $ride, $booking, $amount, $subject));
+                    $fcm_token = $driver->fcm_token;
+                    if ($fcm_token) {
+                        if ($device_type === 'ios' && $driver->is_notification_ride == 1) {
+                            $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        } else {
+                            $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+                        }
+                    }
+                } else {
+
                     if ($booking) {
                         $booking->status = 'pending'; // Set the status to confirmed
                         $booking->save(); // Save the changes to the database
@@ -239,6 +200,18 @@ class PayPalController extends Controller
                     // Calculate time difference in minutes
                     $timeDifferenceInMinutes = $createdAt->diffInMinutes($departureTime, false);
 
+                    // Determine the time before departure based on the calculated difference
+                    /*if ($timeDifferenceInMinutes > 720) { // More than 12 hours
+                        $adjustedTime = Carbon::parse($departureTime)->subHours(3);
+                    } elseif ($timeDifferenceInMinutes > 180) { // Between 12 hours and 3 hours
+                        $adjustedTime = Carbon::parse($departureTime)->subHour(1);
+                    } elseif ($timeDifferenceInMinutes > 30) { // Between 3 hours and 30 minutes
+                        $adjustedTime = Carbon::parse($departureTime)->subMinutes(15);
+                    } elseif ($timeDifferenceInMinutes > 15) { // Between 30 minutes and 15 minutes
+                        $adjustedTime = Carbon::parse($departureTime)->subMinutes(5);
+                    } else {
+                        $adjustedTime = $departureTime; // Too close to departure, use departure time directly
+                    }*/
 
                     if ($timeDifferenceInMinutes > 720) { // More than 12 hours
                              $adjustedTime =  Carbon::parse($createdAt)->subHours(8); // Adjust by 8 hours
@@ -265,9 +238,9 @@ class PayPalController extends Controller
                     ];
 
                     // Send push notification if FCM token is available
-                    $fcm_token = $user->fcm_token;
-                    $device_type = $user->device_type;
-                    if ($fcm_token && $user->is_notification_ride == 1) {
+                    $fcm_token = Auth::user()->fcm_token;
+                    $device_type = Auth::user()->device_type;
+                    if ($fcm_token && Auth::user()->is_notification_ride == 1) {
                         if ($device_type === 'ios') {
                             $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
                         } else {
@@ -276,11 +249,11 @@ class PayPalController extends Controller
                     }
                     //Mail::to($rideProvider->email)->send(new \App\Mail\RideRequestMail($ride, $passenger));
                     \Mail::to($driver->email)->send(new \App\Mail\BookingRequestMail($user, $ride, $booking, $amount, $formattedAdjustedTime));
-                       \Mail::to($user->email)->send(new \App\Mail\BookingAwating($driver, $ride, $booking, $payment, $formattedAdjustedTime));
+
                     // Notification to driver 
                     $notificationData = [
                         'title' => 'Ride Request',
-                        'body' => 'New ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent by user ' . $user->email,
+                        'body' => 'New ride request from ' . $ride->departure_city . ' to ' . $ride->arrival_city . ' has been sent by user ' . Auth::user()->email,
                         'type' => 'ride_request',
                         'ride_id' => $ride->ride_id
                     ];
@@ -296,10 +269,9 @@ class PayPalController extends Controller
                             $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
                         }
                     }
-                     \Mail::to($user->email)->send(new \App\Mail\PaymentReciptMail($driver, $ride, $booking, $payment));
                 }
-               
-             
+                \Mail::to($user->email)->send(new \App\Mail\PaymentReciptMail($driver, $ride, $booking, $payment));
+                \Mail::to($user->email)->send(new \App\Mail\BookingAwating($driver, $ride, $booking, $payment, $formattedAdjustedTime));
                 return $this->apiResponse('success', 200, 'Payment completed', $request);
             } else {
 
@@ -314,6 +286,7 @@ class PayPalController extends Controller
             return $this->apiResponse('error', 500, $e->getMessage());
         }
     }
+
 
     private function handleFailedPayment($rideId, $bookingId)
     {

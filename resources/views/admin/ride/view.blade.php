@@ -56,10 +56,8 @@
                                     class="text-muted" id="userName">{{ $ride->smoking_allowed  }}</span></h6>  
                                   </div>
                                   <div class="col-12 col-md-3 mb-4"> 
-                                    <h6 class="f-14 mb-1"><span class="semi-bold qury">Pets Allowed :</span> <span class="text-muted" id="userName">
-                                            {{ $ride->pets_allowed === 'Avoid pets at home' ? 'Not allowed' : Allowed }}
-                                        </span></h6>
-
+                                    <h6 class="f-14 mb-1"><span class="semi-bold qury">Pets Allowed :</span> <span
+                                    class="text-muted" id="userName">{{ $ride->pets_allowed}}</span></h6>  
                                   </div>
                                   <div class="col-12 col-md-3 mb-4">
                                     <h6 class="f-14 mb-1"><span class="semi-bold qury">Music Preference :</span> <span

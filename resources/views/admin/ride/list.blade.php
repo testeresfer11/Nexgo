@@ -103,7 +103,7 @@
                     <td>{{$ride->arrival_city}}</td>
                     <td>{{$ride->available_seats}}</td>
 
-                    <td>{{ $ride->seat_left <= 0 ? 'Full' : $ride->seat_left}}</td>
+                    <td>{{ $ride->available_seats - $ride->seat_booked <= 0 ? 'Full' : ($ride->available_seats - $ride->seat_booked) }}</td>
                       <td>{{ $ride->departure_time}}</td>
 
                     <td>{{ $ride->getStatusTextnew() }}</td>

@@ -149,8 +149,6 @@ Route::middleware(['CustomSanctumMiddleware'])->group(function () {
         Route::get('delete-ride','deleteRide');
         Route::get('get-booked-ride','getbookRide');
         Route::get('get-ride-detail/{ride_id}','getbookRideDetail');
-         Route::get('get-ride-detail-user/{ride_id}','getbookRideDetailUser');
-        
 
         
         Route::get('get-reports','getReports');

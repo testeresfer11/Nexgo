@@ -3,9 +3,7 @@
  <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
       <a class="sidebar-brand brand-logo" href="{{route('admin.dashboard')}}">
-
-
-              <img src="{{url('/')}}/images/carpool_logo.png" alt="logo" title="Drivvy" />
+        <img src="{{url('/')}}/admin/images/Nexgo_logo.png" alt="logo" />
       <a class="sidebar-brand brand-logo-mini" href="{{route('admin.dashboard')}}"><img src="{{asset('admin/images/logo-mini.svg')}}" alt="logo" /></a>
     </div>
     <ul class="nav">
@@ -187,16 +185,6 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.payout.completed') ? 'active' : '' }}" href="{{ route('admin.payout.completed') }}">
                         Completed Payouts
-                    </a>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.payout.pending.refund') ? 'active' : '' }}" href="{{ route('admin.payout.pending.refund') }}">
-                        Pending Refunds
-                    </a>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.payout.completed.refund') ? 'active' : '' }}" href="{{ route('admin.payout.completed.refund') }}">
-                        Completed Refunds
                     </a>
                 </li>
                 <!-- Additional submenu items can be added here -->

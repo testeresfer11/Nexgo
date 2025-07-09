@@ -70,7 +70,7 @@
         </div>
         <div class="footer">
             <p>Best regards,</p>
-            <p>Drivvy Team</p>
+            <p>Nexgo Team</p>
         </div>
     </div>
 </body>

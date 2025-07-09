@@ -103,7 +103,7 @@ class DocumentController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'id'        => 'required',
-            
+            'status'    => 'required|in:1,2',  // Only allow status 1 (rejected) or 2 (approved)
         ]);
 
         if ($validator->fails()) {

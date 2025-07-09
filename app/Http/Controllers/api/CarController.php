@@ -70,7 +70,7 @@ class CarController extends Controller
                 'color' => $request->color
             ]);
 
-            return $this->apiResponse('success', 200, 'Vehicle details added successully');
+            return $this->apiResponse('success', 200, 'Driver details added successully');
 
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());

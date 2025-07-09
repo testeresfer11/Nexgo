@@ -74,20 +74,18 @@
             <table style="width: 100%;">
                 <thead>
                     <tr>
-                        <th style="font-size: 42px;color: #7dbf43;text-align: left;font-weight: 600;">Drivvy</th>
+                        <th style="font-size: 42px;color: #7dbf43;text-align: left;font-weight: 600;">Nexgo</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr style="margin-top: 20px; display: block;">
                         <td>
-                            <h1 style=" max-width:522px;color: #231f20; font-weight: 600;">Unfortunately, {{$user->first_name}} can’t travel with you anymore.We refunded you.</h1>
+                            <h1 style=" max-width:522px;color: #231f20; font-weight: 600;">Unfortunately, {{$user->first_name}} can’t travel with you anymore.</h1>
                         </td>
                     </tr>
-                    <br>
-                    
                     <tr>
                         <td>
-                            <p style="font-size: 18px; color: #808080;">    {{ \Carbon\Carbon::parse($ride->departure_time)->format('l, d F Y') }}
+                            <p style="font-size: 18px; color: #808080;">    {{ \Carbon\Carbon::parse($booking->booking_date)->format('l, d F Y') }}
 </p>
                         </td>
                     </tr>
@@ -137,35 +135,18 @@
                                 </tr>
                              <tr>
                                 <td style="padding-top:25px;padding-bottom:25px;">
-                                    <span style=" color: #666666;font-size: 18px;font-weight: 600;">{{$user->first_name}}</span>
+                                    <span style=" color: #666666;font-size: 18px;font-weight: 600;">{{ $user->first_name }}</span>
                                     <span style="padding-left: 100px;vertical-align: middle;"><img
                                             src="{{ $user->profile_picture ? url('/storage/users/' . $user->profile_picture) : asset('/admin/images/user-image.webp') }}" alt="profile" style="width:60px;height: 60px; border-radius: 50%;"></span>
                                 </td>
 
                             </tr>
-
                             <tr>
-                        {{--<td style="text-align: right;">
-                            <div class="total-pass">
-                                <span style="font-size: 18px; color: #808080;">Full refund</span>
-                                <span style="margin: 0; color: #666666; font-size: 18px;font-weight: 700;padding-left: 30px;">${{ number_format($booking->amount, 2) }}</span>
-                            </div>
-                        </td>--}}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;">
-                            <div class="total-pass">
-                               <p style="color: #666666; font-size: 18px; font-weight: 600;">You are entitled to a payout.Refer to our <a href="https://drivvy.com.au/drivvy-new/cancellation-refunds"target="_blank">Cancellation & Refunds Policy</a> for full details. </p>
-
-                            </div>
-                        </td>
-                    </tr>
-                            
-                    
+                  
                      <table style="width: 100%;">
                          <tr>
                     <td style="text-align: center;">
-                        <h2 style="font-weight: 600; color: #231f20; border-top: 1px solid #231f20; padding-top: 60px; padding-bottom: 0px;">Ready to Drivvy?</h2>
+                        <h2 style="font-weight: 600; color: #231f20; border-top: 1px solid #231f20; padding-top: 60px; padding-bottom: 0px;">Ready to Nexgo?</h2>
                     </td>
                 </tr>
                 <tr>
@@ -184,7 +165,7 @@
                     <td style="text-align:center;">
                         <div class="copy-right">
                             <span style="vertical-align: middle; padding-right: 5px; font-size:19px; color: #808080;">&#169;</span>
-                            <span style="color:#808080;">2024 Drivvy</span>
+                            <span style="color:#808080;">2024 Nexgo</span>
                         </div>
                     </td>
                 </tr>
@@ -194,10 +175,10 @@
                         <a href="https://www.facebook.com/share/KuefSgBKeuRDRCtn/" target="_blank" aria-label="Facebook" style="text-decoration: none;">
                             <img src="{{ asset('admin/images/Facebook_Icon.png') }}" alt="Facebook" style="width:25px;" />
                         </a>
-                        <a href="https://www.instagram.com/drivvy.australia?igsh=aGN5YmgzbjAwYmZq&utm_source=qr" target="_blank" aria-label="Instagram" style="text-decoration: none;">
+                        <a href="https://www.instagram.com/Nexgo.australia?igsh=aGN5YmgzbjAwYmZq&utm_source=qr" target="_blank" aria-label="Instagram" style="text-decoration: none;">
                             <img src="{{ asset('admin/images/Instagram_Icon.png') }}" alt="Instagram" style="padding: 0 7px; width:25px" />
                         </a>
-                        <a href="linkedin.com/in/drivvy-australia" target="_blank" aria-label="LinkedIn" style="text-decoration: none;">
+                        <a href="linkedin.com/in/Nexgo-australia" target="_blank" aria-label="LinkedIn" style="text-decoration: none;">
                             <img src="{{ asset('admin/images/LinkedIn_Icon.png') }}" alt="LinkedIn" style="width:25px;" />
                         </a>
                     </td>

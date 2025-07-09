@@ -29,7 +29,7 @@ class BookingRequestMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Ride Request')
+        return $this->subject('Ride Requset')
         ->view('emails.booking_request')
                     ->with([
                     'user' => $this->user,

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Drivvy</title>
+    <title>Welcome to Nexgo</title>
     <style>
         body {
             font-family: "Figtree", sans-serif;
@@ -76,14 +76,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">Drivvy</div>
+            <div class="logo">Nexgo</div>
         </div>
         <div class="content">
            
             <p><b><h2>Your password has been updated.</h2></b></p>'
-                <p>We are sorry to see you go. We hope you join the Drivvy community again.</p>
+                <p>We are sorry to see you go. We hope you join the Nexgo community again.</p>
             <div class="divider"></div>
-            <p style="text-align: center; font-weight: bold;">Ready to Drivvy?</p>
+            <p style="text-align: center; font-weight: bold;">Ready to Nexgo?</p>
         </div>
        @include('footer')
     </div>

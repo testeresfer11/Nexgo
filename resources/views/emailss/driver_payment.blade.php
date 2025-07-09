@@ -84,7 +84,7 @@ body {
           <div class="row">
             <div class="col-lg-7">
               <div class="divvy-title mt-5">
-                <h1 class="logo-color fw-700">Drivvy</h1>
+                <h1 class="logo-color fw-700">Nexgo</h1>
               </div>
              
             </div>
@@ -94,7 +94,7 @@ body {
     <div class="col-lg-12">
       <div class="welcome-title my-5">
         <h1>Your transfer will arrive in your account in approximately 5 business days.</h1>
-        <p class="fs-4 mb-0 mt-5">It will appear as “Drivvy payment“.</p>
+        <p class="fs-4 mb-0 mt-5">It will appear as “Nexgo payment“.</p>
  
         <div class="date-time mt-5">
           <p class="color-80">{{ \Carbon\Carbon::parse($booking->booking_date)->format('l, d F Y \a\t h.iA') }}-{{ $ride->departure_city }} > {{$ride->arrival_city }}</p>
@@ -129,7 +129,7 @@ body {
         <h5 class="mb-0 color-80 f-bold">${{ number_format($finalPayoutAmount, 2) }}</h5>
       </div>
       <div class="ready-drive text-center border-top my-5 py-5">
-        <h4 class="f-bold">Ready to Drivvy?</h4>
+        <h4 class="f-bold">Ready to Nexgo?</h4>
       </div>
     </div>
   </div>

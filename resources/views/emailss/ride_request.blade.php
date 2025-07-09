@@ -88,7 +88,7 @@ color:#666;
           <div class="row">
             <div class="col-lg-7">
               <div class="divvy-title mt-5">
-                <h1 class="logo-color fw-700">Drivvy</h1>
+                <h1 class="logo-color fw-700">Nexgo</h1>
               </div>
              
             </div>
@@ -99,7 +99,7 @@ color:#666;
                 <div class="welcome-title my-5">
                     <h1>A passenger wants to<br> book your ride.</h1>
                     <p class="mb-0 color-80 mt-5 f-20">{{ $user->first_name }}  has requested to join your ride! Please<br>
-                         confirm the booking on the Drivvy app if you’d<br>
+                         confirm the booking on the Nexgo app if you’d<br>
                           like this passenger to travel with you.</p>
                     <p class="fs-4 mb-0 mt-5">Booking</p>
                     <p class=" mb-0 color-80">{{ $booking->seat_count }} seat</p>
@@ -144,7 +144,7 @@ color:#666;
                   </div>
                
                <div class="ready-drive text-center border-top my-5 py-5">
-                <h4 class="f-bold">Ready to Drivvy?</h4>
+                <h4 class="f-bold">Ready to Nexgo?</h4>
                </div>
               </div>
             </div>
@@ -162,17 +162,17 @@ color:#666;
                             <span class="me-2">
                                 <i class="bi bi-c-circle"></i>
                             </span>
-                            2024 Drivvy
+                            2024 Nexgo
                         </h6>
                     </div>
                     <nav class="social-icons d-flex gap-2 justify-content-center" aria-label="Social Media Links">
                         <a href="https://www.facebook.com/share/KuefSgBKeuRDRCtn/" target="_blank" aria-label="Facebook" class="fb-icon">
                             <img src="{{ asset('admin/images/facebook.png') }}" alt="Facebook" class="social-icon-img" />
                         </a>
-                        <a href="https://www.instagram.com/drivvy.australia?igsh=aGN5YmgzbjAwYmZq&utm_source=qr" target="_blank" aria-label="Instagram" class="insta-icon">
+                        <a href="https://www.instagram.com/Nexgo.australia?igsh=aGN5YmgzbjAwYmZq&utm_source=qr" target="_blank" aria-label="Instagram" class="insta-icon">
                             <img src="{{ asset('admin/images/instagram.png') }}" alt="Instagram" class="social-icon-img" />
                         </a>
-                        <a href="linkedin.com/in/drivvy-australia" target="_blank" aria-label="LinkedIn" class="linkedin-icon">
+                        <a href="linkedin.com/in/Nexgo-australia" target="_blank" aria-label="LinkedIn" class="linkedin-icon">
                             <img src="{{ asset('admin/images/linkedin-logo.png') }}" alt="LinkedIn" class="social-icon-img" />
                         </a>
                     </nav>

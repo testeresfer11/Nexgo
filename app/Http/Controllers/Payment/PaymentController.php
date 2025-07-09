@@ -13,21 +13,15 @@ use App\Models\Payments;
 use Carbon\Carbon;
 class PaymentController extends Controller
 {
-public function getList(Request $request)
+ public function getList(Request $request)
 {
     try {
         // Start the query with the necessary joins
         $query = Payments::join('bookings', 'bookings.booking_id', '=', 'payments.booking_id')
             ->join('users', 'users.user_id', '=', 'bookings.passenger_id')
-            ->select(
-                'users.first_name', 
-                'bookings.*', 
-                'payments.*', 
-                'payments.status as payment_status', // Alias for payments status
-                'bookings.status as booking_status'  // Include booking status
-            )
-            ->where('payments.status', '!=', 'pending') // Exclude 'pending' status
-            ->orderBy('payments.created_at', 'desc');  // Order by the 'created_at' column of payments in descending order
+            ->select('users.first_name', 'bookings.*', 'payments.*', 'payments.status')
+            ->where('payments.status', '!=', 'pending') // Exclude 'pending' status here
+            ->orderBy('payments.created_at', 'desc'); // Order by the 'created_at' column of payments in descending order
 
         // Apply search filter
         if ($request->has('search') && !empty($request->search)) {
@@ -39,8 +33,8 @@ public function getList(Request $request)
         // Handle date filters (start_date and end_date)
         if ($request->filled('start_date') && $request->filled('end_date')) {
             // Both dates are filled, filter between the range
-            $startDate = Carbon::parse($request->start_date)->startOfDay();
-            $endDate = Carbon::parse($request->end_date)->endOfDay();
+            $startDate = Carbon::parse($request->start_date)->startOfDay(); // Start of the day
+            $endDate = Carbon::parse($request->end_date)->endOfDay(); // End of the day
 
             $query->whereBetween('payments.payment_date', [$startDate, $endDate]);
         } elseif ($request->filled('start_date')) {
@@ -55,30 +49,24 @@ public function getList(Request $request)
 
         // Filter by payment method
         if ($request->has('payment_method') && !empty($request->payment_method)) {
-            $query->where('payments.payment_method', '=', $request->payment_method);
+            $query->where('payments.payment_method', '=', $request->payment_method); // Filter by payment method
         }
 
         // Filter by payment status
         if ($request->has('status') && !empty($request->status)) {
-            $query->where('payments.status', '=', $request->status);
-        }
-
-        // Filter by booking status (optional)
-        if ($request->has('booking_status') && !empty($request->booking_status)) {
-            $query->where('bookings.status', '=', $request->booking_status);
+            $query->where('payments.status', '=', $request->status); // Filter by payment status
         }
 
         // Get the results with pagination
         $payments = $query->paginate(10);
-       
-        // Return the view with the payments and booking status
+
+        // Return the view with the payments data
         return view("admin.payments.list", compact("payments"));
     } catch (\Exception $e) {
         // If an error occurs, return an error message
         return redirect()->back()->with("error", $e->getMessage());
     }
 }
-
 
 
     public function search(Request $request){
@@ -211,7 +199,7 @@ public function addCard(Request $request)
 
         return response()->json(['message' => 'Card added successfully'], 200);
     } catch (\Exception $e) {
-        return response()->json(['error' => "Something went wrong, please check your card details!"], 400);
+        return response()->json(['error' => $e->getMessage()], 400);
     }
 }
 
