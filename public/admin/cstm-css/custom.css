@@ -44,7 +44,10 @@ border-radius:6px;
 }
 .forms-sample .toggle-password {
     right: 30px;
-    top: 50%;
+    top: 50px;
+}
+.text-black{
+  color: #000;
 }
 .iti input.iti__search-input {
     display: none;
@@ -129,7 +132,8 @@ nav-tabs .nav-link.active,.nav-tabs .nav-item.show .nav-link {
   border-color: #2c2e33 #2c2e33 black; 
 }
 .sidebar .nav .nav-item.active > .nav-link {
-  background: linear-gradient(270deg, rgba(158,184,51,1) 35%, rgba(51,56,64,1) 100%);  position: relative; 
+  /* background: linear-gradient(270deg, rgba(158,184,51,1) 35%, rgba(51,56,64,1) 100%);  position: relative;  */
+  background: #00c100;
   color: #fff;
 }
 /* .sidebar .nav .nav-item.active > .nav-link:before {
@@ -823,7 +827,22 @@ h4.response-title.d-flex.justify-content-between.align-items-center {
   padding: 12px 30px;
  }
  button.btn.default-btn.btn-md {
-  background: linear-gradient(90deg, rgba(158,184,51,1) 35%, rgba(51,56,64,1) 100%) !important;
+  /* background: linear-gradient(90deg, rgba(158,184,51,1) 35%, rgba(51,56,64,1) 100%) !important; */
+  border: 1px solid #008000 !important;
+  background: #008000 !important;
+}
+button.btn.secondary-btn.btn-md{
+  border: 1px solid #008000;
+  color: #008000;
+}
+/* button.btn.secondary-btn.btn-md:hover{
+  color: #fff;
+} */
+button.btn.default-btn.btn-md:hover, button.btn.default-btn.btn-md:focus, 
+button.btn.secondary-btn.btn-md:hover, button.btn.secondary-btn.btn-md:focus{
+  background: #025e02 !important;
+  color: #fff;
+  border-color: #025e02;
 }
 
 .modal-content .question-pick a i {
@@ -1208,13 +1227,50 @@ button.btn.green-btn.btn-md {
   width: 103px;
 }
 a{
-  color:9eb833 !important;
+  color: #fff !important;
 }
+/*11-07-2025 start*/
+.table-card .card .card-body{
+  padding: 0;
+}
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown{
+  box-shadow: 0px 0px 35px -3px #00000075;
+    background: #ffffff;
+    color: #000000;
+}
+.preview-list .preview-item .preview-item-content p{
+  color: #000;
+}
+.noti-bell{
+  width: 25px;
+}
+.carpool-tabs .tab button.active{
+  background: #008000;
+}
+.navbar-profile span{
+  color: #000;
+}
+.sidebar-icon-only .sidebar .nav .nav-item{
+  padding: 3px 5px;
+}
+.sidebar-icon-only .sidebar .nav .nav-item.hover-open .nav-link .menu-title{
+  background-color: #00c100;
+}
+input.is-invalid, .form-control.is-valid{
+  background-image: none !important;
+}
+td span.menu-icon{
+  border: 1px solid #e7e7e7;
+  padding: 5px;
+  border-radius: 7px;
+  display: inline-block;
+}
+/*11-07-2025 end*/
 
 @media screen and (max-width:768px){
 .navbar .navbar-menu-wrapper {
     justify-content: space-between;
-    padding: 0 !important;!i;!;
+    padding: 0 !important;
 }
 
 .navbar .navbar-toggler {

@@ -13,24 +13,28 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Payouts Management</h4>
-            <!-- <a href="{{route('admin.ride.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add User</span></button></a> -->
-          </div>
-          <div class="custom-search">
-                <form action="{{ route('admin.payout.pending') }}" method="GET" id="searchForm">
-                    <div class="d-flex align-items-center search-gap">
-                        <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
-                        <button type="submit" class="btn default-btn btn-md">Search</button>
-                        <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
+            <div class="px-4 py-4">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title">Payouts Management</h4>
+                    <!-- <a href="{{route('admin.ride.add')}}"><button type="button" class="btn default-btn btn-md">
+                    <span class="menu-icon">+ Add User</span></button></a> -->
+                
+                <div class="custom-search">
+
+                        <form action="{{ route('admin.payout.pending') }}" method="GET" id="searchForm">
+                            <div class="d-flex align-items-center search-gap">
+                                <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
+                                <button type="submit" class="btn default-btn btn-md">Search</button>
+                                <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
 
             <script>
@@ -44,47 +48,46 @@
                 });
             </script>
 
-          <div class="table-responsive">
-            <table class="table table-striped" id="filterData">
-                                <thead>
-                                    <tr>
-                                        <th> Sr.no </th>
-                                        <th> User </th>
-                                         <th> Email </th>
-                                        <th> Amount </th>
-                                        <th> Action </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($payouts as $payout)
-                                           
-                                        <tr id="payout-{{ $payout->id }}">
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $payout->driver_name ?? 'N/A' }}</td>
-                                             <td>{{ $payout->driver_email ?? 'N/A' }}</td>
-                                            <td>${{ number_format($payout->amount, 2) }}</td>
-                                            
-                                            <td >
-                                            <div class="pay-out-btn">
-        
-                                            <button type="button" class="btn btn-outline-primary f-12 m-btn" id="make-payment-status" data-payout-id="{{$payout->id}}">MAKE PAYMENT</button>
-                                        </td>
-                                        </tr>
-                                    @empty
+                            <div class="table-responsive mt-0">
+                                <table class="table table-striped" id="filterData">
+                                    <thead>
                                         <tr>
-                                            <td colspan="5" class="no-record"> <center>No record found </center></td>
+                                            <th> Sr.no </th>
+                                            <th> User </th>
+                                            <th> Email </th>
+                                            <th> Amount </th>
+                                            <th> Action </th>
                                         </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($payouts as $payout)
+                                            
+                                            <tr id="payout-{{ $payout->id }}">
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $payout->driver_name ?? 'N/A' }}</td>
+                                                <td>{{ $payout->driver_email ?? 'N/A' }}</td>
+                                                <td>${{ number_format($payout->amount, 2) }}</td>
+                                                
+                                                <td >
+                                                <div class="pay-out-btn">
+            
+                                                <button type="button" class="btn btn-outline-primary f-12 m-btn" id="make-payment-status" data-payout-id="{{$payout->id}}">MAKE PAYMENT</button>
+                                            </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="no-record"> <center>No record found </center></td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                             </table>
                         </div>
                             {{ $payouts->appends(request()->input())->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">

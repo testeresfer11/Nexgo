@@ -22,7 +22,7 @@
            
             <form class="forms-sample" id="profile-setting" action="{{route('admin.profile')}}" method="POST" enctype="multipart/form-data">
               @csrf
-              <div class="form-group">
+              <div class="form-group px-3">
                 <div class="row">
                     <div class="col-md-6">
                         <label for="exampleInputFirstName">Name</label>
@@ -45,7 +45,7 @@
                     
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group px-3">
                 
                 <div class="row">
                 <div class="col-md-6">
@@ -78,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group px-3">
                 <div class="row">
                     <div class="col-md-6">
                             <label>Profile upload</label>
@@ -90,7 +90,7 @@
                 </div>
             </div>
               @if($user->profile_picture != "")
-            <div class="form-group">
+            <div class="form-group px-3">
                 <div class="row">
                     <div class="col-md-6">
                             <image src="{{url('')}}/storage/users/{{$user->profile_picture}}" width="200" hieght="200">
@@ -98,7 +98,7 @@
                     </div>
             </div>
             @endif
-            <div class="form-group">
+            <div class="form-group px-3">
                 <div class="row">
                     <div class="col-md-12">
                         <label for="exampleInputEmail">Bio</label>
@@ -111,9 +111,10 @@
                     </div>
                 </div>
             </div>
-          
+          <div class="text-end">
               <button type="submit" class="btn btn-primary mr-2">Update</button>
               {{-- <button class="btn btn-dark">Cancel</button> --}}
+            </div>
             </form>
           </div>
         </div>

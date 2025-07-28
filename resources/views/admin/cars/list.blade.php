@@ -13,26 +13,27 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Cars Management</h4>
-            <!-- <a href="{{route('admin.cars.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add Car</span></button></a> -->
+          <div class="px-4 py-4">
+            <div class="d-flex justify-content-between">
+              <h4 class="card-title">Cars Management</h4>
+              <!-- <a href="{{route('admin.cars.add')}}"><button type="button" class="btn default-btn btn-md">
+                <span class="menu-icon">+ Add Car</span></button></a> -->
+              <div class="custom-search">
+                <form action="{{ route('admin.cars.search') }}" method="GET" id="searchForm">
+                    <div class="d-flex align-items-center search-gap">
+                        <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
+                        <button type="submit" class="btn default-btn btn-md">Search</button>
+                        <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                    </div>
+                </form>
+              </div>
+            </div>
           </div>
-          <div class="custom-search">
-            <form action="{{ route('admin.cars.search') }}" method="GET" id="searchForm">
-                <div class="d-flex align-items-center search-gap">
-                    <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
-                    <button type="submit" class="btn default-btn btn-md">Search</button>
-                    <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-                </div>
-            </form>
-        </div>
-
         <script>
             // Reset button click event
             document.getElementById('resetBtn').addEventListener('click', function() {
@@ -44,7 +45,7 @@
             });
         </script>
 
-          <div class="table-responsive">
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -70,19 +71,18 @@
                     <td>{{$car->license_plate}}</td>
                     <td>{{$car->year}}</td>
                     
-                    <td> 
-                      <span class="menu-icon">
+                    <td>
                       <span class="menu-icon">
                         <a href="{{route('admin.cars.edit',['id' => $car->car_id])}}" title="Edit" class="text-success"><i class="mdi mdi-pencil"></i></a>
-                      </span>&nbsp;&nbsp;
-                      <span class="menu-icon">
+                      </span>
+                      <span class="menu-icon mx-2">
                         <a href="#" title="Delete" class="text-danger deleteCar" data-id="{{$car->car_id}}"><i class="mdi mdi-delete"></i></a>
                       </span> 
                     </td>
                   </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="no-record"> <center>No record found </center></td>
+                    <td colspan="8" class="no-record"> <center>No record found </center></td>
                 </tr>
                 @endforelse
               </tbody>

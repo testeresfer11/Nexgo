@@ -13,66 +13,71 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Payment Management</h4>
-            <!-- <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add User</span></button></a> -->
-          </div>
-          <div class="custom-search">
-           <form action="{{ route('admin.payments.list') }}" method="GET" id="searchForm">
-              <div class="d-flex align-items-center search-gap">
-                 
+          <div class="px-4 py-4">
+            <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
+              <h4 class="card-title">Payment Management</h4>
+              <!-- <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
+                <span class="menu-icon">+ Add User</span></button></a> -->
+            </div>
+            <div class="custom-search">
+            <form action="{{ route('admin.payments.list') }}" method="GET" id="searchForm">
+                <div class="d-flex align-items-end justify-content-between search-gap">
                   
-                          <div class="form-group">
-                            <label for="start_date">From Date</label>
-                                    <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
-                                </div>
+                    <div class="d-flex align-items-end">
+                            <div class="form-group mb-0">
+                              <label for="start_date">From Date</label>
+                                      <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="end_date">To Date</label>
-                                    <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
-                                </div>
+                            <div class="form-group mb-0 px-2">
+                                <label for="end_date">To Date</label>
+                                <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
+                            </div>
 
-                                <script>
-                                    // Automatically open the calendar when clicking on the input field
-                                    document.getElementById('start_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                    
-                                    document.getElementById('end_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                </script>                  <select name="payment_method" class="form-control">
-                      <option value="">All</option>
-                      <option value="stripe" {{ request()->get('payment_method') == 'stripe' ? 'selected' : '' }}>Stripe</option>
-                      <option value="paypal" {{ request()->get('payment_method') == 'paypal' ? 'selected' : '' }}>PayPal</option>
-                  </select>
-                  
-                  <input type="text" name="search" placeholder="Search..." value="{{ request()->get('search') }}" class="form-control">
+                            <script>
+                                // Automatically open the calendar when clicking on the input field
+                                document.getElementById('start_date').addEventListener('focus', function() {
+                                    this.showPicker();
+                                });
+                                
+                                document.getElementById('end_date').addEventListener('focus', function() {
+                                    this.showPicker();
+                                });
+                            </script>                  <select name="payment_method" class="form-control">
+                        <option value="">All</option>
+                        <option value="stripe" {{ request()->get('payment_method') == 'stripe' ? 'selected' : '' }}>Stripe</option>
+                        <option value="paypal" {{ request()->get('payment_method') == 'paypal' ? 'selected' : '' }}>PayPal</option>
+                    </select>
+                  </div>
+                  <div class="d-flex">
+                    
+                    <input type="text" name="search" placeholder="Search..." value="{{ request()->get('search') }}" class="form-control">
 
-                  <button type="submit" class="btn default-btn btn-md">Search</button>
-                  <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-              </div>
-          </form>
+                    <button type="submit" class="btn default-btn mx-2 btn-md">Search</button>
+                    <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                  </div>
+                </div>
+            </form>
 
-          <script>
-              // Reset button click event
-              document.getElementById('resetBtn').addEventListener('click', function() {
-                  // Reset form inputs
-                  document.getElementById('searchForm').reset();
+            <script>
+                // Reset button click event
+                document.getElementById('resetBtn').addEventListener('click', function() {
+                    // Reset form inputs
+                    document.getElementById('searchForm').reset();
 
-                  // Redirect to the same page to clear query parameters
-                  window.location.href = "{{ route('admin.payments.list') }}";  
-              });
-          </script>
+                    // Redirect to the same page to clear query parameters
+                    window.location.href = "{{ route('admin.payments.list') }}";  
+                });
+            </script>
 
+            </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -110,7 +115,7 @@
                   </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="no-record"> <center>No record found </center></td>
+                    <td colspan="8" class="no-record"> <center>No record found </center></td>
                 </tr>
                 @endforelse
               </tbody>

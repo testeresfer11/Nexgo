@@ -14,22 +14,23 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
+            <div class="px-4 py-4">
           <div class="d-flex justify-content-between">
             <h4 class="card-title">Payouts Management</h4>
             <!-- <a href="{{route('admin.ride.add')}}"><button type="button" class="btn default-btn btn-md">
               <span class="menu-icon">+ Add User</span></button></a> -->
-          </div>
+          
           <div class="custom-search">
               <form action="{{ route('admin.payout.completed') }}" method="GET" id="searchForm">
                 <div class="d-flex align-items-center search-gap">
                     <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
                     <button type="submit" class="btn default-btn btn-md">Search</button>
-                    <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
+                    <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
                 </div>
             </form>
 
@@ -43,9 +44,10 @@
                     window.location.href = "{{ route('admin.payout.completed') }}";  // Redirect to your completed payouts page
                 });
             </script>
-
           </div>
-          <div class="table-responsive">
+        </div>
+          </div>
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
                                 <thead>
                                     <tr>
@@ -84,8 +86,7 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">

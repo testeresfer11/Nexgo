@@ -213,6 +213,7 @@
         </div>
         
     </div>---}}
+</div>
    <div class="row">
     <div class="col-lg-6 grid-margin stretch-card">
         <div class="card">
@@ -232,7 +233,7 @@
     </div>
 </div>
 
-</div>
+
 @endsection
 @section('scripts')
 <script src="{{asset('admin/js/dashboard.js')}}"></script>

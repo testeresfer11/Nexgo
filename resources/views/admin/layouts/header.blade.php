@@ -62,7 +62,8 @@
         <li class="nav-item dropdown border-right">
         <?php $notifications = App\Models\Notifications::getNotifications(); ?>   
             <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                <i class="mdi mdi-bell"></i> 
+              <img src="{{asset('images/noti-bell.png')}}" class="img-fluid noti-bell" alt="">
+                {{-- <i class="mdi mdi-bell"></i>  --}}
                 @foreach($notifications as $notify)
                 @if($notify->read_status == 0)
                 <span class="count bg-danger"></span>
@@ -96,7 +97,7 @@
                   @endif
               @endforeach
               <div class="dropdown-divider"></div>
-              <p class="p-3 mb-0 text-center"><a href="{{ route('admin.user.notifications') }}" class="text-white">See all notifications</a></p>
+              <p class="p-3 mb-0 text-center"><a href="{{ route('admin.user.notifications') }}" class="text-black">See all notifications</a></p>
           </div>
 
         </li>

@@ -28,45 +28,54 @@
                
                 <form class="forms-sample" action="{{route('admin.changePassword')}}" method="post" id="change-password">
                   @csrf
-                  <div class="form-group row">
-                      <label for="exampleInputPassword" class="col-sm-3 col-form-label">Current Password</label>
-                      <div class="col-sm-9">
-                        <input type="password" class="form-control @error('current_password') is-invalid @enderror" id="password" placeholder="Current Password" name="current_password">
-                        <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password" ></i>
-                        @error('current_password')
-                          <span class="invalid-feedback">
-                              <strong>{{ $message }}</strong>
-                          </span>
-                        @enderror
-                      </div>    
+                  <div class="row px-2">
+                    <div class="col-md-4">
+                    <div class="form-group">
+                        
+                          <label for="exampleInputPassword" class=" col-form-label">Current Password</label>
+                          <input type="password" class="form-control @error('current_password') is-invalid @enderror" id="password" placeholder="Current Password" name="current_password">
+                          <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password" ></i>
+                          @error('current_password')
+                            <span class="invalid-feedback">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                          @enderror
+                          
+                    </div>
                   </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
 
-                  <div class="form-group row">
-                    <label for="password" class="col-sm-3 col-form-label">New Password</label>
-                    <div class="col-sm-9">
-                      <input type="password" class="form-control @error('password') is-invalid @enderror" id="password-field" placeholder="Password" name="password">
-                      <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password-field" ></i>
-                      @error('password')
+                      <label for="password" class=" col-form-label">New Password</label>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password-field" placeholder="Password" name="password">
+                        <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password-field" ></i>
+                        @error('password')
+                            <span class="invalid-feedback">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                          @enderror
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    
+                    <div class="form-group">
+                      <label for="password_confirm" class=" col-form-label">Confirm Password</label>
+                      
+                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id = "password-confirm" name="password_confirmation" placeholder="Confirm Password">
+                        <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password-confirm" ></i>
+                        @error('password_confirm')
                           <span class="invalid-feedback">
                               <strong>{{ $message }}</strong>
                           </span>
                         @enderror
+                      
                     </div>
                   </div>
-                  <div class="form-group row">
-                    <label for="password_confirm" class="col-sm-3 col-form-label">Confirm Password</label>
-                    <div class="col-sm-9">
-                      <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id = "password-confirm" name="password_confirmation" placeholder="Confirm Password">
-                      <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password-confirm" ></i>
-                      @error('password_confirm')
-                        <span class="invalid-feedback">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                      @enderror
-                    </div>
                   </div>
+                  <div class="text-end">
                   <button type="submit" class="btn btn-primary mr-2">Update</button>
                   {{-- <button class="btn btn-dark">Cancel</button> --}}
+                </div>
                 </form>
               </div>
             </div>

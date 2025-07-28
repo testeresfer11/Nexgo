@@ -13,26 +13,28 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Deleted Users</h4>
-            <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add User</span></button></a>
+          <div class="px-4 py-4">
+            <div class="d-flex justify-content-between">
+              <h4 class="card-title">Deleted Users</h4>
+              <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
+                <span class="menu-icon">+ Add User</span></button></a>
+            </div>
+            <div class="custom-search mt-3">
+              <form action="{{ route('admin.user.deleted') }}" method="GET">
+                <div class="d-flex align-items-center justify-content-end search-gap">
+                  <input type="text" name="search" placeholder="Search..." class="w-25">
+                  <button type="submit" class="btn default-btn btn-md">Search</button>
+                  <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                </div>
+              </form>
+            </div>
           </div>
-          <div class="custom-search">
-            <form action="{{ route('admin.user.deleted') }}" method="GET">
-              <div class="d-flex align-items-center search-gap">
-                <input type="text" name="search" placeholder="Search...">
-                <button type="submit" class="btn default-btn btn-md">Search</button>
-                 <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-              </div>
-            </form>
-          </div>
-          <div class="table-responsive">
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -61,13 +63,10 @@
                     <td style="width: 300px" class="vehicle-modal">{{$user->email}}</td>
                     
                     <td> 
-                   
-                      
-                      </span>&nbsp;&nbsp;
                       <span class="menu-icon">
                        <a href="#" title="Restore" class="text-success restoreUser" data-id="{{ $user->user_id }}">
-				    <i class="mdi mdi-restore"></i>
-				</a>
+				                  <i class="mdi mdi-restore"></i>
+				                </a>
                       </span> 
                     </td>
                   </tr>

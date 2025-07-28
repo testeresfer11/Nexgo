@@ -13,38 +13,39 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Vehicle Management</h4>
-            <a href="{{route('admin.vehicle.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add Vehicle</span></button></a>
+          <div class="px-4 py-4">
+              <div class="d-flex justify-content-between">
+                <h4 class="card-title">Vehicle Management</h4>
+                <a href="{{route('admin.vehicle.add')}}"><button type="button" class="btn default-btn btn-md">
+                  <span class="menu-icon">+ Add Vehicle</span></button></a>
+              </div>
+            <div class="custom-search mt-3">
+                <form action="{{ route('admin.vehicle.search') }}" method="GET" id="searchForm">
+                    <div class="d-flex align-items-center justify-content-end search-gap">
+                        <input type="text" name="search" class="w-25" value="{{ request()->search }}" placeholder="Search...">
+                        <button type="submit" class="btn default-btn btn-md">Search</button>
+                        <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                    </div>
+                </form>
+
+                <script>
+                    // Reset button click event
+                    document.getElementById('resetBtn').addEventListener('click', function() {
+                        // Reset form inputs
+                        document.getElementById('searchForm').reset();
+                        
+                        // Optionally, you can remove query parameters by redirecting to the base URL
+                        window.location.href = "{{ route('admin.vehicle.list') }}";
+                    });
+                </script>
+            </div>
           </div>
-         <div class="custom-search">
-            <form action="{{ route('admin.vehicle.search') }}" method="GET" id="searchForm">
-                <div class="d-flex align-items-center search-gap">
-                    <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
-                    <button type="submit" class="btn default-btn btn-md">Search</button>
-                    <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-                </div>
-            </form>
-
-            <script>
-                // Reset button click event
-                document.getElementById('resetBtn').addEventListener('click', function() {
-                    // Reset form inputs
-                    document.getElementById('searchForm').reset();
-                    
-                    // Optionally, you can remove query parameters by redirecting to the base URL
-                    window.location.href = "{{ route('admin.vehicle.list') }}";
-                });
-            </script>
-        </div>
-
-          <div class="table-responsive vehicle-table">
+          <div class="table-responsive vehicle-table mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -66,11 +67,11 @@
                     <td> <div  style="width: 200px" class="vehicle-modal">{{$vechile->type}}</div></td>
                     <td> <div  style="width: 200px" class="vehicle-modal">{{$vechile->color}}</div></td>
                     <td> 
-                      <span class="menu-icon">
+                      
                       <span class="menu-icon">
                         <a href="{{route('admin.vehicle.edit',['id' => $vechile->vechile_id])}}" title="Edit" class="text-success"><i class="mdi mdi-pencil"></i></a>
-                      </span>&nbsp;&nbsp;
-                      <span class="menu-icon">
+                      </span>
+                      <span class="menu-icon mx-2">
                         <a href="#" title="Delete" class="text-danger deleteVechile" data-id="{{$vechile->vechile_id}}"><i class="mdi mdi-delete"></i></a>
                       </span> 
                     </td>

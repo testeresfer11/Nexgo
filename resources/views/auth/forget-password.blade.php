@@ -27,12 +27,17 @@
 </head>
 <body>
     <div class="container-scroller">
-        <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="container-fluid page-body-wrapper full-page-wrapper relative">
             <div class="content-wrapper login-page full-page-wrapper d-flex align-items-center auth login-bg">
+                <div class="icon-box">
+                    <img src="{{asset('images/icon-6.png')}}" class="img-fluid icon-1">
+                    <img src="{{asset('images/icon-6.png')}}" class="img-fluid icon-2">
+                    <img src="{{asset('images/icon-4.png')}}" class="img-fluid icon-4">
+                </div>
                 <div class="row w-100 m-0">
-                    <div class="col-12 col-md-6">
-                        <div class="login-left-icon">
-                            <img src="{{asset('images/carpool_logo.png')}}">
+                    <div class="col-12 col-md-6 d-flex justify-content-center align-items-center">
+                        <div class="login-left-icon text-center w-100 logo-box">
+                            <img src="{{asset('images/new-logo.png')}}" class="img-fluid logo">
                         </div>
                     </div>
                     <div class="col-12 col-md-6">

@@ -3,8 +3,8 @@
  <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
       <a class="sidebar-brand brand-logo" href="{{route('admin.dashboard')}}">
-        <img src="{{url('/')}}/admin/images/Nexgo_logo.png" alt="logo" />
-      <a class="sidebar-brand brand-logo-mini" href="{{route('admin.dashboard')}}"><img src="{{asset('admin/images/logo-mini.svg')}}" alt="logo" /></a>
+        <img src="{{asset('images/new-logo.png')}}" alt="logo" />
+      <a class="sidebar-brand brand-logo-mini" href="{{route('admin.dashboard')}}"><img src="{{asset('images/new-logo.png')}}" alt="logo" /></a>
     </div>
     <ul class="nav">
     <br>
@@ -49,7 +49,7 @@
         <span class="menu-title">User Management</span>
     </a>
     <div class="submenu" style="display: none;">
-        <ul>
+        <ul class="nav flex-column sub-menu">
             <li class="{{ request()->routeIs('admin.user.list') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('admin.user.list') }}">
                     <span class="menu-title">User List</span>

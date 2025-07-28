@@ -73,7 +73,9 @@
                                 
                             </div>
                         </div>
+                        <div class="text-end">
                         <button type="submit" class="btn btn-primary mr-2">Add</button>
+                    </div>
                     </form>
                     <br>    
                     <p><b>Note:</b> To add multiple values please add comma(,) as a seprator. e.g value1, value2...etc</p>

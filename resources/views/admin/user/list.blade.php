@@ -13,74 +13,80 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
-            <h4 class="card-title">User Management</h4>
-            <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md" >
-              <span class="menu-icon">+ Add User</span></button></a>
-          </div>
-          <div class="custom-search">
+          <div class="px-4 py-4">
+            <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
+              <h4 class="card-title">User Management</h4>
+              <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md" >
+                <span class="menu-icon">+ Add User</span></button></a>
+            </div>
             <div class="custom-search">
-               <form action="{{ route('admin.user.list') }}" method="GET" id="searchForm">
-                      <div class="d-flex align-items-center search-gap">
-                          <!-- Search Input -->
-                         
+              <div class="custom-search">
+                <form action="{{ route('admin.user.list') }}" method="GET" id="searchForm">
+                        <div class="d-flex align-items-end justify-content-between search-gap">
+                            <!-- Search Input -->
+                          
 
-                          <!-- Date Range Filter -->
-                                <div class="form-group">
-                            <label for="start_date">From Date</label>
-                                    <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
+                            <!-- Date Range Filter -->
+                            <div class="d-flex align-items-end ">
+                                  <div class="form-group mb-0">
+                                      <label for="start_date">From Date</label>
+                                      <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
+                                  </div>
+
+                                  <div class="form-group mb-0 mx-2">
+                                      <label for="end_date">To Date</label>
+                                      <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
+                                  </div>
+
+                                  <script>
+                                      // Automatically open the calendar when clicking on the input field
+                                      document.getElementById('start_date').addEventListener('focus', function() {
+                                          this.showPicker();
+                                      });
+                                      
+                                      document.getElementById('end_date').addEventListener('focus', function() {
+                                          this.showPicker();
+                                      });
+                                  </script>
+                                  <!-- Status Filter -->
+                                  <select name="status" class="form-control ">
+                                      <option value="" {{ request()->get('status') == '' ? 'selected' : '' }}>All Status</option>
+                                      <option value="1" {{ request()->get('status') == '1' ? 'selected' : '' }}>Active</option>
+                                      <option value="0" {{ request()->get('status') == '0' ? 'selected' : '' }}>Inactive</option>
+                                  </select>
                                 </div>
+                                <div class="d-flex">
 
-                                <div class="form-group">
-                                    <label for="end_date">To Date</label>
-                                    <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
-                                </div>
+                            <input type="text" name="search" class="px-2" placeholder="Search..." value="{{ request()->get('search') }}">
 
-                                <script>
-                                    // Automatically open the calendar when clicking on the input field
-                                    document.getElementById('start_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                    
-                                    document.getElementById('end_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                </script>
-                          <!-- Status Filter -->
-                          <select name="status" class="form-control">
-                              <option value="" {{ request()->get('status') == '' ? 'selected' : '' }}>All Status</option>
-                              <option value="1" {{ request()->get('status') == '1' ? 'selected' : '' }}>Active</option>
-                              <option value="0" {{ request()->get('status') == '0' ? 'selected' : '' }}>Inactive</option>
-                          </select>
+                            <!-- Submit and Reset Buttons -->
+                            <button type="submit" class="btn default-btn mx-2 btn-md">Search</button>
+                            <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+                          </div>
+                        </div>
+                    </form>
 
-                           <input type="text" name="search" placeholder="Search..." value="{{ request()->get('search') }}">
+                    <script>
+                        // Reset button click event
+                        document.getElementById('resetBtn').addEventListener('click', function() {
+                            // Reset form inputs
+                            document.getElementById('searchForm').reset();
 
-                          <!-- Submit and Reset Buttons -->
-                          <button type="submit" class="btn default-btn btn-md">Search</button>
-                          <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-                      </div>
-                  </form>
+                            // Reset the form to initial state after clearing inputs
+                            window.location.href = "{{ route('admin.user.list') }}";  // Redirect to the same page to clear the query parameters
+                        });
+                    </script>
 
-                  <script>
-                      // Reset button click event
-                      document.getElementById('resetBtn').addEventListener('click', function() {
-                          // Reset form inputs
-                          document.getElementById('searchForm').reset();
-
-                          // Reset the form to initial state after clearing inputs
-                          window.location.href = "{{ route('admin.user.list') }}";  // Redirect to the same page to clear the query parameters
-                      });
-                  </script>
+              </div>
 
             </div>
-
-          </div>
-          <div class="table-responsive">
+        </div>
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -115,15 +121,17 @@
 
                     </div> </td>
                     <td> 
+                      <div class="d-flex align-items-center">
                       <span class="menu-icon">
                         <a href="{{route('admin.user.view',['id' => $user->user_id])}}" title="View" class="text-primary"><i class="mdi mdi-eye"></i></a>
-                      </span>&nbsp;&nbsp;&nbsp;
-                      <span class="menu-icon">
+                      </span>
+                      <span class="menu-icon mx-2">
                         <a href="{{route('admin.user.edit',['id' => $user->user_id])}}" title="Edit" class="text-success"><i class="mdi mdi-pencil"></i></a>
-                      </span>&nbsp;&nbsp;
+                      </span>
                       <span class="menu-icon">
                         <a href="#" title="Delete" class="text-danger deleteUser" data-id="{{$user->user_id}}"><i class="mdi mdi-delete"></i></a>
                       </span> 
+                    </div>
                     </td>
                   </tr>
                 @empty

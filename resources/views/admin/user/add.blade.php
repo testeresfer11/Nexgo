@@ -167,8 +167,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="text-end">
                         <button type="submit" class="btn btn-primary mr-2">Add</button>
+                    </div>
                     </form>
                 </div>
             </div>

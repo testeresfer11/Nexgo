@@ -24,53 +24,57 @@ select.form-control {
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
-          <div class="d-flex justify-content-between">
+            <div class="px-4 py-4">
+          <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
             <h4 class="card-title">Reports Management</h4>
           </div>
           <div class="custom-search">
-            <form action="{{ route('admin.reports.users') }}" method="GET" id="searchForm">
-                <div class="d-flex align-items-center search-gap">
+            <form action="{{ route('admin.reports.users') }}" method="GET" id="searchForm" class="m-0">
+                <div class="d-flex align-items-end justify-content-between search-gap">
                   
-
+                    <div class="d-flex align-items-end">
                     <!-- Date Filter -->
-                   <div class="form-group">
-                            <label for="start_date">From Date</label>
-                                    <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
-                                </div>
+                    <div class="form-group m-0">
+                        <label for="start_date">From Date</label>
+                        <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
+                    </div>
 
-                                <div class="form-group">
-                                    <label for="end_date">To Date</label>
-                                    <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
-                                </div>
+                    <div class="form-group m-0 px-2">
+                        <label for="end_date">To Date</label>
+                        <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
+                    </div>
 
-                                <script>
-                                    // Automatically open the calendar when clicking on the input field
-                                    document.getElementById('start_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                    
-                                    document.getElementById('end_date').addEventListener('focus', function() {
-                                        this.showPicker();
-                                    });
-                                </script>
-
-                            <input type="text" name="search" value="{{ request()->search }}" placeholder="Search..." class="form-control">
+                    <script>
+                        // Automatically open the calendar when clicking on the input field
+                        document.getElementById('start_date').addEventListener('focus', function() {
+                            this.showPicker();
+                        });
+                        
+                        document.getElementById('end_date').addEventListener('focus', function() {
+                            this.showPicker();
+                        });
+                    </script>
                     <!-- Status Filter -->
-                         <select name="status" class="form-control" style="width: fit-content;">
-                                <option value="" {{ request()->status === "" ? 'selected' : '' }}>All</option>
-                                <option value="0" {{ request()->status == 0 ? 'selected' : '' }}>Unresolved</option>
-                                <option value="1" {{ request()->status == 1 ? 'selected' : '' }}>Resolved</option>
-                                <option value="2" {{ request()->status == 2 ? 'selected' : '' }}>False Complaint</option>
-                            </select>
-
+                    <select name="status" class="form-control" style="width: fit-content;">
+                        <option value="" {{ request()->status === "" ? 'selected' : '' }}>All</option>
+                        <option value="0" {{ request()->status == 0 ? 'selected' : '' }}>Unresolved</option>
+                        <option value="1" {{ request()->status == 1 ? 'selected' : '' }}>Resolved</option>
+                        <option value="2" {{ request()->status == 2 ? 'selected' : '' }}>False Complaint</option>
+                    </select>
                     
-                    <button type="submit" class="btn default-btn btn-md">Search</button>
+                </div>
+                <div class="d-flex">
+           
+
+                    <input type="text" name="search" value="{{ request()->search }}" placeholder="Search..." class="form-control">
+                    <button type="submit" class="btn default-btn mx-2 btn-md">Search</button>
                  <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
+                </div>
               </div>
           </form>
 
@@ -86,7 +90,8 @@ select.form-control {
           </script>
 
           </div>
-          <div class="table-responsive">
+            </div>
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
                     <thead>
                         <tr>

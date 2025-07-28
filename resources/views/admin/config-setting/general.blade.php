@@ -20,12 +20,12 @@
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title"><u>General setting</u></h4>
+                    <h4 class="card-title">General setting</h4>
                     <x-alert />
 
                     <form class="forms-sample" id="edit-user" action="{{ route('admin.settings.general')}}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="form-group">
+                        <div class="form-group px-3">
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="exampleInputFirstName">Site Name</label>
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group px-3">
                             <div class="row">
                                 <div class="col-md-6 input-phone">
                                     <label for="exampleInputPhoneNumber">Phone Number</label>
@@ -100,9 +100,9 @@
                         @endif--}}  
                         
                         <!-- New Fields for Platform Fee and Commission Setup -->
-                        <h4 class="card-title"><u>Fee setting</u></h4>
+                        <h4 class="card-title">Fee setting</h4>
 
-                        <div class="form-group">
+                        <div class="form-group px-3">
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="platformFee">Platform Fee (%)</label>
@@ -135,8 +135,9 @@
                             </div>
                         </div>
 
-                        
-                        <button type="submit" class="btn btn-primary mr-2">Update</button>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary mr-2">Update</button>
+                        </div>
                     </form>
                 </div>
             </div>

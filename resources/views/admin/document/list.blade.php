@@ -13,24 +13,25 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
+    <div class="col-lg-12 grid-margin table-card stretch-card">
       <div class="card">
         <x-alert />
        
         <div class="card-body">
+          <div class="px-4 py-4">
           <div class="d-flex justify-content-between">
             <h4 class="card-title">Document Management</h4>
             <!-- <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
               <span class="menu-icon">+ Add User</span></button></a> -->
-          </div>
+          
           <div class="custom-search">
             <form action="{{ route('admin.document.search') }}" method="GET" id="searchForm">
-    <div class="d-flex align-items-center search-gap">
-        <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
-        <button type="submit" class="btn default-btn btn-md">Search</button>
-        <button type="button" class="btn default-btn btn-md" id="resetBtn">Reset</button>
-    </div>
-</form>
+              <div class="d-flex align-items-center justify-content-end search-gap">
+                  <input type="text" name="search" value="{{ request()->search }}" placeholder="Search...">
+                  <button type="submit" class="btn default-btn btn-md">Search</button>
+                  <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+              </div>
+            </form>
 
 <script>
     // Reset button click event
@@ -42,9 +43,10 @@
         window.location.href = "{{ route('admin.document.list') }}";
     });
 </script>
-
+</div>
           </div>
-          <div class="table-responsive">
+          </div>
+          <div class="table-responsive mt-0">
             <table class="table table-striped" id="filterData">
               <thead>
                 <tr>
@@ -84,7 +86,7 @@
                     <td> 
                       <span class="menu-icon">
                         <a href="{{route('admin.user.view',['id' => $document->user_id])}}" title="View" class="text-primary"><i class="mdi mdi-eye"></i></a>
-                      </span>&nbsp;&nbsp;&nbsp;
+                      </span>
                      {{--<span class="menu-icon">
                         <a href="{{route('admin.user.edit',['id' => $document->user_id])}}" title="Edit" class="text-success"><i class="mdi mdi-pencil"></i></a>
                       </span>&nbsp;&nbsp;
