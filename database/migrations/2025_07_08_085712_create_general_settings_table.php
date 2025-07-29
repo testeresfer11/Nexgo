@@ -19,12 +19,13 @@ return new class extends Migration
             $table->string('country_code', 50)->nullable();
             $table->string('phone', 15)->nullable();
             $table->string('address', 100)->nullable();
-            $table->timestamps();
             $table->string('commission', 50)->nullable();
             $table->string('platform_fee', 50)->nullable();
             $table->string('per_km_price', 50)->nullable();
             $table->text('app_url')->nullable();
             $table->text('google_url')->nullable();
+            $table->timestamps();
+
         });
     }
 

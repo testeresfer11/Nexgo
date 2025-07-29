@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('otp_management', function (Blueprint $table) {
+        Schema::create('config_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->integer('otp');
+            $table->string('type');
+            $table->string('key');
+            $table->string('value');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('otp_management');
+        Schema::dropIfExists('config_settings');
     }
 };

@@ -231,9 +231,9 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}" href="{{ route('admin.settings.general') }}">General Settings</a>
                 </li>
-                {{--<li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.contentpage.content') ? 'active' : '' }}" href="{{ route('admin.contentpage.list') }}">Content</a>
-                </li>--}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.settings.smtp') ? 'active' : '' }}" href="{{ route('admin.settings.smtp') }}">SMTP Settings</a>
+                </li>
                 
                 <!-- <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.settings.notifications') ? 'active' : '' }}" href="{{ route('admin.settings.notifications') }}">Notifications Settings</a>

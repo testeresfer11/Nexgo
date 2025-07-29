@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             PolicySeeder::class,
             ReportSeeder::class,
-            VechileSeeder::class
+            VechileSeeder::class,
+            EmailTemplateSeeder::class,
+            ConfigSettingTableSeeder::class,
 
         ]);
     }

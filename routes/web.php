@@ -27,7 +27,8 @@ Route::name('user.')->controller(ForgotPasswordController::class)->group(functio
 
     Route::match(['get', 'post'], 'forget-password', 'forgetPassword')->name('forget-password');
     Route::match(['get', 'post'], 'reset-password/{token}', 'resetPassword')->name('reset-password');
-    Route::get('verify-email/{token}', 'verifyEmail')->name('verify-email');
+    Route::match(['get', 'post'], 'verify-otp', 'verifyOtp')->name('verify');
+    Route::get('resend','resend')->name('resend');;
 
 });
 // Authentication Routes
@@ -189,7 +190,7 @@ Route::group(['prefix' =>'admin'],function () {
                 Route::name('settings.')->group(function () {
                     Route::match(['get', 'post'],'general',[GeneralController::class, 'edit'] )->name('general');
                     Route::match(['get', 'post'],'notifications',[GeneralController::class, 'notifications'] )->name('notifications');
-                    //Route::get('rides', 'rideReports')->name('rides');
+                    Route::match(['get', 'post'], 'smtp', [GeneralController::class,'smtpInformation'])->name('smtp');
                 });
             });
 

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str; 
 use Session;
+use Log;
 use Twilio\Rest\Client;
 use Illuminate\Validation\Rule;
 

@@ -5,7 +5,7 @@
     <h3 class="page-title">Config Setting</h3>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('admin.config-setting.smtp')}}">Config Setting</a></li>
+        <li class="breadcrumb-item"><a href="{{route('admin.settings.smtp')}}">Config Setting</a></li>
         <li class="breadcrumb-item active" aria-current="page">SMTP</li>
       </ol>
     </nav>
@@ -20,7 +20,7 @@
             <h4 class="card-title">SMTP Information</h4>
             <x-alert />
            
-            <form class="forms-sample" id="smtp-information" action="{{route('admin.config-setting.smtp')}}" method="POST">
+            <form class="forms-sample" id="smtp-information" action="{{route('admin.settings.smtp')}}" method="POST">
               @csrf
               <div class="form-group">
                 <div class="row">
@@ -28,7 +28,7 @@
                         <label for="exampleInputFromEmail">From Email</label>
                         <input type="email" class="form-control  @error('from_email') is-invalid @enderror" id="exampleInputFromEmail" placeholder="From Email" name="from_email" value="{{$smtpDetail['from_email'] ?? ''}}">
                         @error('from_email')
-                            <span class="invalid-feedback"
+                            <span class="invalid-feedback">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror

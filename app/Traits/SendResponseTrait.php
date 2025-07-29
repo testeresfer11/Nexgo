@@ -2,10 +2,9 @@
 
 namespace App\Traits;
 
-use App\Models\{EmailTemplate,ConfigSetting};
+use App\Models\{EmailTemplate};
 use Illuminate\Support\Facades\Mail;
-
-
+use App\Models\ConfigSetting;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -80,7 +79,7 @@ trait SendResponseTrait
     public function mailSend( $data ){
         try{
            $emailConfig = ConfigSetting::where('type','smtp')->pluck('value','key');
-
+            //dd($emailConfig);
           $body = array('body' => $data['html']);
         
            Mail::send('email.sendEmail', $body, function($message) use($data)
