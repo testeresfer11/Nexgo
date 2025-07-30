@@ -1,147 +1,130 @@
 @extends('admin.layouts.app')
-@section('title', 'Users')
+@section('title', __('admin.users'))
+
 @section('breadcrum')
 <div class="page-header">
-    <h3 class="page-title">Users</h3>
+    <h3 class="page-title">{{ __('admin.users') }}</h3>
     <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Users</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Users</li>
-    </ol>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ __('admin.users') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ __('admin.users') }}</li>
+        </ol>
     </nav>
 </div>
 @endsection
+
 @section('content')
 <div class="row">
     <div class="col-lg-12 grid-margin table-card stretch-card">
-      <div class="card">
-        <x-alert />
-       
-        <div class="card-body">
-          <div class="px-4 py-4">
-            <div class="d-flex justify-content-between">
-              <h4 class="card-title">Deleted Users</h4>
-              <a href="{{route('admin.user.add')}}"><button type="button" class="btn default-btn btn-md">
-                <span class="menu-icon">+ Add User</span></button></a>
-            </div>
-            <div class="custom-search mt-3">
-              <form action="{{ route('admin.user.deleted') }}" method="GET">
-                <div class="d-flex align-items-center justify-content-end search-gap">
-                  <input type="text" name="search" placeholder="Search..." class="w-25">
-                  <button type="submit" class="btn default-btn btn-md">Search</button>
-                  <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
+        <div class="card">
+            <x-alert />
+            <div class="card-body">
+                <div class="px-4 py-4">
+                    <div class="d-flex justify-content-between">
+                        <h4 class="card-title">{{ __('admin.deleted_users') }}</h4>
+                        <a href="{{ route('admin.user.add') }}">
+                            <button type="button" class="btn default-btn btn-md">
+                                <span class="menu-icon">+ {{ __('admin.add_user') }}</span>
+                            </button>
+                        </a>
+                    </div>
+                    <div class="custom-search mt-3">
+                        <form action="{{ route('admin.user.deleted') }}" method="GET">
+                            <div class="d-flex align-items-center justify-content-end search-gap">
+                                <input type="text" name="search" placeholder="{{ __('admin.search') }}..." class="w-25">
+                                <button type="submit" class="btn default-btn btn-md">{{ __('admin.search') }}</button>
+                                <button type="button" class="btn secondary-btn btn-md" id="resetBtn">{{ __('admin.reset') }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-              </form>
-            </div>
-          </div>
-          <div class="table-responsive mt-0">
-            <table class="table table-striped" id="filterData">
-              <thead>
-                <tr>
-                  <th> Profile </th>
-                  <th> Name </th>
-                  <th> Email </th>
-                  <th> Action </th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse ($users as $user)
-                
-                  <tr id={{$user->user_id}}>
-                  <td class="py-1">
-                  <img 
-                            class=" img-lg  rounded-circle"
-                            @if($user->profile_picture != "")
-                                src="{{url('/')}}/storage/users/{{$user->profile_picture}}"
-                            @else
-                                 src="{{ asset('/admin/images/user-image.webp') }}" 
-                            @endif
-                            
-                            alt="User profile picture">
-                    </td>
-                    <td style="width: 300px" class="vehicle-modal"> {{$user->first_name ?? '-'}} {{$user->last_name}}</td>
-                    <td style="width: 300px" class="vehicle-modal">{{$user->email}}</td>
-                    
-                    <td> 
-                      <span class="menu-icon">
-                       <a href="#" title="Restore" class="text-success restoreUser" data-id="{{ $user->user_id }}">
-				                  <i class="mdi mdi-restore"></i>
-				                </a>
-                      </span> 
-                    </td>
-                  </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="no-record"> <center>No record found </center></td>
-                </tr>
-                @endforelse
-              </tbody>
-            </table>
-          </div>
-          <div class="custom_pagination">
-             {{ $users->links('pagination::bootstrap-4') }}
+                <div class="table-responsive mt-0">
+                    <table class="table table-striped" id="filterData">
+                        <thead>
+                            <tr>
+                                <th>{{ __('admin.profile') }}</th>
+                                <th>{{ __('admin.name') }}</th>
+                                <th>{{ __('admin.email') }}</th>
+                                <th>{{ __('admin.action') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($users as $user)
+                                <tr id="{{ $user->user_id }}">
+                                    <td class="py-1">
+                                        <img class="img-lg rounded-circle"
+                                            @if($user->profile_picture != "")
+                                                src="{{ url('/') }}/storage/users/{{ $user->profile_picture }}"
+                                            @else
+                                                src="{{ asset('/admin/images/user-image.webp') }}"
+                                            @endif
+                                            alt="{{ __('admin.user_profile_picture') }}">
+                                    </td>
+                                    <td class="vehicle-modal" style="width: 300px">
+                                        {{ $user->first_name ?? '-' }} {{ $user->last_name }}
+                                    </td>
+                                    <td class="vehicle-modal" style="width: 300px">
+                                        {{ $user->email }}
+                                    </td>
+                                    <td>
+                                        <span class="menu-icon">
+                                            <a href="#" title="{{ __('admin.restore') }}" class="text-success restoreUser" data-id="{{ $user->user_id }}">
+                                                <i class="mdi mdi-restore"></i>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="no-record text-center">{{ __('admin.no_record_found') }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="custom_pagination">
+                    {{ $users->links('pagination::bootstrap-4') }}
+                </div>
             </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 @endsection
+
 @section('scripts')
-<!-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#filterData').DataTable({
-              layout: {
-                    bottomEnd: null,
-                    topStart: null
-                }
-        });
-    });
-</script> -->
 <script>
 $(document).on('click', '.restoreUser', function(e) {
     e.preventDefault();
     const userId = $(this).data('id');
 
-    // Show SweetAlert confirmation dialog
     Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to restore this user?",
+        title: '{{ __("admin.are_you_sure") }}',
+        text: '{{ __("admin.confirm_restore_text") }}',
         icon: 'warning',
         showCancelButton: true,
-         confirmButtonColor: "#2ea57c",
-          cancelButtonColor: "#d33",
-        confirmButtonText: 'Yes, restore it!',
-        cancelButtonText: 'Cancel'
+        confirmButtonColor: "#2ea57c",
+        cancelButtonColor: "#d33",
+        confirmButtonText: '{{ __("admin.yes_restore") }}',
+        cancelButtonText: '{{ __("admin.cancel") }}'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Get CSRF token from the meta tag
             const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-            // AJAX request to restore the user
             $.ajax({
-                url: '/admin/user/restore/' + userId, // Adjust the URL as needed
-                type: 'POST', // Use POST for restoring
+                url: '/admin/user/restore/' + userId,
+                type: 'POST',
                 data: {
-                    _token: csrfToken // Include CSRF token
+                    _token: csrfToken
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success('User restored successfully!');
-
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
+                        toastr.success('{{ __("admin.restore_success") }}');
+                        setTimeout(() => location.reload(), 2000);
                     } else {
-                          toastr.error('Unable to restore the user.');
-
+                        toastr.error('{{ __("admin.restore_failed") }}');
                     }
                 },
-                error: function(xhr) {
-                    // Handle error (e.g., show an error message)
-                        toastr.error('An error occurred while restoring the user. Please try again.');
-
-                    console.error('Error restoring user', xhr);
+                error: function() {
+                    toastr.error('{{ __("admin.restore_error") }}');
                 }
             });
         }
@@ -150,12 +133,8 @@ $(document).on('click', '.restoreUser', function(e) {
 </script>
 
 <script>
-    // Reset search input and reload the page
-    document.getElementById('resetBtn').addEventListener('click', function() {
-        window.location.href = "{{ route('admin.user.deleted') }}"; // Redirect to the original list page
-    });
+document.getElementById('resetBtn').addEventListener('click', function() {
+    window.location.href = "{{ route('admin.user.deleted') }}";
+});
 </script>
-
-
-
 @stop

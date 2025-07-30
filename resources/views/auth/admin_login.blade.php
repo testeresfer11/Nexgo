@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Login</title>
-    <!-- plugins:css -->
+    <title>{{ __('auth.login_title') }}</title>    <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('admin/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('admin/vendors/css/vendor.bundle.base.css')}}">
     <!-- endinject -->
@@ -46,13 +45,15 @@
                         <div class="card">
                             <div class="card-body px-5">
                                 <div class="login-title d-flex align-items-center justify-content-between">
-                                    <p class="f-18">Welcome to <span class="dark bold">Nexgo</span></p>
+                                <p class="f-18">{{ __('auth.welcome') }} <span class="dark bold">Nexgo</span></p>
+                                <x-language-switcher />
+
                                 </div>
-                                <h2 class="pb-4 f-38">Sign In</h2>
+                                <h2 class="pb-4 f-38">{{ __('auth.sign_in') }}</h2>
                                 <form action="{{ route('login') }}" method="POST" id="loginForm">
                                     @csrf
                                     <div class="form-group">
-                                        <label for="email">{{ __('Email Address') }} *</label>
+                                        <label for="email">{{ __('auth.email') }}  *</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" autocomplete="email" autofocus>
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
@@ -61,7 +62,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="password">{{ __('Password') }} *</label>
+                                        <label for="password">{{ __('auth.passwords') }} *</label>
                                         <input name="password" id="password" type="password" class="form-control @error('password') is-invalid @enderror" autocomplete="current-password">
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
@@ -70,11 +71,12 @@
                                         @enderror
                                     </div>
                                     <div class="form-group d-flex align-items-center justify-content-end">
-                                        <div class="forgot"> <a href="{{route('user.forget-password')}}" class="forgot-pass dark text-decoration-none">{{ __('Forgot Password?') }}</a></div>
+                                        <div class="forgot"> <a href="{{route('user.forget-password')}}" class="forgot-pass dark text-decoration-none">{{ __('auth.forgot_password') }} 
+                                        </a></div>
                                     </div>
                                      
                                     <div class="text-center">
-                                        <button type="submit" class="btn default-btn btn-md w-100">{{ __('Login') }}</button>
+                                        <button type="submit" class="btn default-btn btn-md w-100">{{ __('auth.login') }}</button>
                                     </div>   
                                          
                                 </form>
@@ -96,47 +98,49 @@
     <!-- endinject -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
     <script>
-        @if (session('status'))
-            toastr.success("{{ session('status') }}");
+    $(document).ready(function() {
+        @if (session('success'))
+            toastr.success("{{ session('success') }}");
         @endif
 
         @if (session('error'))
             toastr.error("{{ session('error') }}");
         @endif
+    });
 
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error("{{ $error }}");
-            @endforeach
-        @endif
+    let messages = {
+        emailRequired: "{{ __('auth.validation.email_required') }}",
+        emailValid: "{{ __('auth.validation.email_valid') }}",
+        passwordRequired: "{{ __('auth.validation.password_required') }}",
+        passwordMin: "{{ __('auth.validation.password_min') }}",
+    };
 
-        $(document).ready(function () {
-            $('#loginForm').validate({
-                rules: {
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    password: {
-                        required: true,
-                        minlength: 8
-                    },
-                },
-                messages: {
-                    email: {
-                        required: 'Please enter Email Address.',
-                        email: 'Please enter a valid Email Address.',
-                    },
-                    password: {
-                        required: 'Please enter Password.',
-                        minlength: 'Password must be at least 8 characters long.',
-                    },
-                },
-                submitHandler: function (form) {
-                    form.submit();
-                }
-            });
-        });
+    $('#loginForm').validate({
+        errorElement: 'label',
+        errorClass: 'error',
+        focusInvalid: false,
+        focusCleanup: true,
+        rules: {
+            email: {
+                required: true,
+                email: true,
+            },
+            password: {
+                required: true,
+                minlength: 6,
+            },
+        },
+        messages: {
+            email: {
+                required: messages.emailRequired,
+                email: messages.emailValid,
+            },
+            password: {
+                required: messages.passwordRequired,
+                minlength: messages.passwordMin,
+            },
+        },
+    });
     </script>
 </body>
 </html>

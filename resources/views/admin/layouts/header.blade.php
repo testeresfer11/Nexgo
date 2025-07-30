@@ -17,6 +17,8 @@
         <span class="mdi mdi-menu"></span>
       </button>
       <ul class="navbar-nav navbar-nav-right">
+      <x-language-switcher />
+
         {{-- <li class="nav-item dropdown border-left">
             <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
               <i class="mdi mdi-email"></i>

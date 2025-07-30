@@ -44,17 +44,19 @@
           </div>
 
           <div class=" col-lg-6 bg-white px-5 py-5">
+          <x-language-switcher />
+
             <div class="card-body login-form px-5 py-5">
               <div class="text-center">
                 <img src="{{asset('admin/images/auth/new_logo.png')}}" class="img-fluid" alt="">
-                <h1 class=" heading-primary my-3">{{ __('Reset Password') }}</h1>
-                <p class="grey">Don’t worry happens to all of us. enter your email below to recover your password</p>
+                <h1 class=" heading-primary my-3">{{ __('auth.reset_password') }}</h1>
+                <p class="grey">{{ __('auth.reset_password_description') }}</p>
               </div>
               {{-- <x-alert /> --}}
               <form action="{{ route('user.reset-password',['token' => $token]) }}" method="POST" id="loginForm">
                 @csrf
                 <div class="form-group mb-1">
-                  <label for="password">{{ __('Password') }} *</label>
+                  <label for="password">{{ __('auth.passwords') }} *</label>
                   <div class="form-input">
                     <input name="password" id="password" type="password" class="form-control  @error('password') is-invalid @enderror" autocomplete="current-password">
                     <span class="togglePassword eye-icon" data-toggle="password">
@@ -69,7 +71,7 @@
                 </div>
 
                 <div class="form-group mt-1 pt-2">
-                  <label for="password-confirm">{{ __('Confirm Password') }}</label>
+                  <label for="password-confirm">{{ __('auth.confirm_password') }}</label>
                   <div class="form-input">
                     <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                     <span class="togglePassword eye-icon" data-toggle="password-confirm">
@@ -84,7 +86,7 @@
                 </div>
 
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary btn-block enter-btn">{{ __('Reset Password') }}</button>
+                  <button type="submit" class="btn btn-primary btn-block enter-btn">{{ __('auth.reset_password') }}</button>
                 </div>
 
               </form>
@@ -107,13 +109,13 @@
               },
               messages: {
                 password: {
-                  required: 'Password is required.',
-                  minlength: 'Password length must contain 8 charcter.',
+                  required: '{{ __("auth.password_required") }}',
+                  minlength: '{{ __("auth.password_minlength") }}',
                 },
                 password_confirmation: {
-                  required: 'Confirm password is required.',
-                  minlength: 'Confirm password length must contain 8 charcter.',
-                  equalTo: "Password and confirm password must be same"
+                  required: '{{ __("auth.confirm_password_required") }}',
+                  minlength: '{{ __("auth.confirm_password_minlength") }}',
+                  equalTo: '{{ __("auth.passwords_must_match") }}'
                 },
               },
               submitHandler: function(form) {

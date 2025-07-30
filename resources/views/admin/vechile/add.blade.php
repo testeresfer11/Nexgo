@@ -1,14 +1,14 @@
 @extends('admin.layouts.app')
 
-@section('title', ' Add Vehicle')
+@section('title', __('admin.add_vehicle'))
 
 @section('breadcrumb')
 <div class="page-header">
-    <h3 class="page-title"> Add Vehicle</h3>
+<h3 class="page-title"> {{ __('admin.add_vehicle') }}</h3>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.vehicle.list') }}"> Add Vehicle </a></li>
-            <li class="breadcrumb-item active" aria-current="page"> Add Vehicle</li>
+            <li class="breadcrumb-item"><a href="{{ route('admin.vehicle.list') }}"> {{ __('admin.add_vehicle') }} </a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ __('admin.add_vehicle') }}</li>
         </ol>
     </nav>
 </div>
@@ -20,7 +20,7 @@
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title"> Add Vehicle</h3>
+                    <h3 class="card-title"> {{ __('admin.add_vehicle') }}</h3>
                     <x-alert />
 
                     <form class="forms-sample" id="add-vechile" action="{{ route('admin.vehicle.add') }}" method="POST" enctype="multipart/form-data">
@@ -28,7 +28,7 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="exampleInputFirstName">Make/Brand Name</label>
+                                    <label for="exampleInputFirstName">{{ __('admin.make') }}</label>
                                     <textarea class="form-control @error('make') is-invalid @enderror" name="make" rows="4" cols="50"></textarea>
                                     @error('make')
                                     <span class="invalid-feedback" role="alert">
@@ -37,7 +37,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="exampleInputFirstName"> Model </label>
+                                    <label for="exampleInputFirstName"> {{ __('admin.model') }} </label>
                                     <textarea class="form-control @error('model') is-invalid @enderror" name="model" rows="4" cols="50"></textarea>
                                     @error('model')
                                     <span class="invalid-feedback" role="alert">
@@ -51,7 +51,7 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="exampleInputFirstName"> Type </label>
+                                    <label for="exampleInputFirstName"> {{ __('admin.type') }} </label>
                                     <textarea class="form-control @error('type') is-invalid @enderror" name="type" rows="4" cols="50"></textarea>
                                     
                                     @error('type')
@@ -61,7 +61,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="exampleInputFirstName"> Color </label>
+                                    <label for="exampleInputFirstName"> {{ __('admin.color') }} </label>
                                     <textarea class="form-control @error('color') is-invalid @enderror" name="color" rows="4" cols="50"></textarea>
                                     
                                     @error('color')
@@ -74,11 +74,12 @@
                             </div>
                         </div>
                         <div class="text-end">
-                        <button type="submit" class="btn btn-primary mr-2">Add</button>
-                    </div>
+                        <button type="submit" class="btn btn-primary mr-2">{{ __('admin.submit') }}</button>
+                        </div>
                     </form>
                     <br>    
-                    <p><b>Note:</b> To add multiple values please add comma(,) as a seprator. e.g value1, value2...etc</p>
+                    <p><b>{{ __('admin.note') }}</b> {{ __('admin.note') }}</p>
+
 
                 </div>
             </div>
@@ -107,18 +108,10 @@
                 },
             },
             messages: {
-                make: {
-                    required: "Make field is required",
-                },
-                model: {
-                    required: "Model field is required",
-                },
-                color: {
-                    required: "Color number is required",
-                },
-                type: {
-                    required: "Type is required"
-                },
+                make: { required: "{{ __('admin.required_make') }}" },
+                model: { required: "{{ __('admin.required_model') }}" },
+                type: { required: "{{ __('admin.required_type') }}" },
+                color: { required: "{{ __('admin.required_color') }}" },
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {

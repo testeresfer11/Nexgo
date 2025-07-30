@@ -11,17 +11,29 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\admin\{AuthController,DashboardController,UserController,RideController,RequestController,ReviewsController,ReportController,GeneralController,MessageController,VechileController,DocumentController,PolicyController, CarsController,FareController,ContentController};
 use App\Http\Controllers\Payment\PaymentController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Http\Request;
+
 
 
 Route::get('/', function () {
     return redirect()->route('adminlogin');
 });
 
-
-Route::get('delete-steps', function () {
+// Set the locale based on the session or default to 'en'
+Route::post('/language-change', function (Request $request) {
+    $locale = $request->input('locale'); 
    
-    return view('delete-steps'); // Replace 'some-view' with the actual view name
-});
+
+    if (in_array($locale, ['en', 'fr'])) {
+        App::setLocale($locale);
+        session(['locale' => $locale]); 
+        //dd(session()->all());
+    }
+
+    return redirect()->back();
+})->name('language.change');
+
 
 Route::name('user.')->controller(ForgotPasswordController::class)->group(function () {
 

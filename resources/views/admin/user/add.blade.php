@@ -45,7 +45,7 @@
                                     </span>
                                     @enderror
                                 </div>
-                                
+
                             </div>
                         </div>
                         <div class="form-group">
@@ -70,7 +70,7 @@
                                         </div>
 
                                         <input type="tel" id="phone" name="phone_number" class="form-control @error('phone_number') is-invalid @enderror" placeholder="Enter phone number" value="{{ old('phone_number') }}">
-                                         <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code') }}">
+                                        <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code') }}">
                                         <input type="hidden" name="country_shortname" id="country_shortname" value="{{ old('country_shortname') }}">
                                     </div>
                                     @error('phone_number')
@@ -104,54 +104,54 @@
                                 </div>
                             </div>
                         </div>
-                     
-                          <div class="form-group">
-                                <div class="row">
-                                    <!-- Profile Picture -->
-                                    <div class="col-md-6">
-                                        <label for="profile_picture">Profile Picture</label>
-                                        <input type="file" name="profile_picture" class="form-control file-upload-info" accept="image/*">
-                                    </div>
 
-                                    <!-- Driver's License -->
-                                    <div class="col-md-6">
-                                        <label for="license">Driver's License</label>
-                                        <input type="file" name="license" class="form-control file-upload-info" accept="image/*">
-                                    </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <!-- Profile Picture -->
+                                <div class="col-md-6">
+                                    <label for="profile_picture">Profile Picture</label>
+                                    <input type="file" name="profile_picture" class="form-control file-upload-info" accept="image/*">
+                                </div>
+
+                                <!-- Driver's License -->
+                                <div class="col-md-6">
+                                    <label for="license">Driver's License</label>
+                                    <input type="file" name="license" class="form-control file-upload-info" accept="image/*">
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <div class="row">
-                                    <!-- National ID / Passport -->
-                                    <div class="col-md-6">
-                                        <label for="national_id">National ID / Passport</label>
-                                        <input type="file" name="national_id" class="form-control file-upload-info" accept="image/*">
-                                    </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <!-- National ID / Passport -->
+                                <div class="col-md-6">
+                                    <label for="national_id">National ID / Passport</label>
+                                    <input type="file" name="national_id" class="form-control file-upload-info" accept="image/*">
+                                </div>
 
-                                    <!-- Technical Inspection Certificate -->
-                                    <div class="col-md-6">
-                                        <label for="technical_inspection_certificate">Technical Inspection Certificate</label>
-                                        <input type="file" name="technical_inspection_certificate" class="form-control file-upload-info" accept="image/*">
-                                    </div>
+                                <!-- Technical Inspection Certificate -->
+                                <div class="col-md-6">
+                                    <label for="technical_inspection_certificate">Technical Inspection Certificate</label>
+                                    <input type="file" name="technical_inspection_certificate" class="form-control file-upload-info" accept="image/*">
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <div class="row">
-                                    <!-- Registration Certificate -->
-                                    <div class="col-md-6">
-                                        <label for="registration_certificate">Registration Certificate</label>
-                                        <input type="file" name="registration_certificate" class="form-control file-upload-info" accept="image/*">
-                                    </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <!-- Registration Certificate -->
+                                <div class="col-md-6">
+                                    <label for="registration_certificate">Registration Certificate</label>
+                                    <input type="file" name="registration_certificate" class="form-control file-upload-info" accept="image/*">
+                                </div>
 
-                                    <!-- Insurance -->
-                                    <div class="col-md-6">
-                                        <label for="insurance">Insurance</label>
-                                        <input type="file" name="insurance" class="form-control file-upload-info" accept="image/*">
-                                    </div>
+                                <!-- Insurance -->
+                                <div class="col-md-6">
+                                    <label for="insurance">Insurance</label>
+                                    <input type="file" name="insurance" class="form-control file-upload-info" accept="image/*">
                                 </div>
                             </div>
+                        </div>
 
 
                         <div class="form-group">
@@ -168,8 +168,8 @@
                             </div>
                         </div>
                         <div class="text-end">
-                        <button type="submit" class="btn btn-primary mr-2">Add</button>
-                    </div>
+                            <button type="submit" class="btn btn-primary mr-2">Add</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -211,42 +211,43 @@
                     minlength: 6
                 },
                 password_confirmation: {
-                     required: true,
+                    required: true,
                     equalTo: "#password"
                 },
                 profile_picture: {
                     required: false
-                   
+
                 }
             },
             messages: {
                 first_name: {
-                    required: "First name is required",
-                    minlength: "First name must be at least 3 characters long"
+                    required: "{{ __('validation.first_name_required') }}",
+                    minlength: "{{ __('validation.first_name_min') }}"
                 },
                 last_name: {
-                    required: "Last name is required",
-                    minlength: "Last name must be at least 3 characters long"
+                    required: "{{ __('validation.last_name_required') }}",
+                    minlength: "{{ __('validation.last_name_min') }}"
                 },
                 email: {
-                    required: "Email is required",
-                    email: "Please enter a valid email address"
+                    required: "{{ __('validation.email_required') }}",
+                    email: "{{ __('validation.email_valid') }}"
                 },
                 phone_number: {
-                    required: "Phone number is required",
-                    number: "Please enter a valid phone number",
-                    minlength: "Phone number must be at least 8 digits long",
-                    maxlength: "Phone number cannot exceed 15 digits"
+                    required: "{{ __('validation.phone_required') }}",
+                    number: "{{ __('validation.phone_numeric') }}",
+                    minlength: "{{ __('validation.phone_min') }}",
+                    maxlength: "{{ __('validation.phone_max') }}"
                 },
                 password: {
-                    required: "Password is required",
-                    minlength: "Password must be at least 6 characters long"
+                    required: "{{ __('validation.password_required') }}",
+                    minlength: "{{ __('validation.password_min') }}"
                 },
                 password_confirmation: {
-                    required: "Confirm Password is required",
-                    equalTo: "Passwords do not match"
+                    required: "{{ __('validation.confirm_password_required') }}",
+                    equalTo: "{{ __('validation.passwords_not_match') }}"
                 }
             },
+
             errorElement: 'span',
             errorPlacement: function(error, element) {
                 if (element.attr("type") == "file") {
@@ -270,35 +271,36 @@
             return value.trim().length !== 0;
         }, "Spaces are not allowed");
 
-   var input = document.querySelector("#phone");
-    var iti = window.intlTelInput(input, {
-        initialCountry: 'au',
-        separateDialCode: true,
-        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
-    });
+        var input = document.querySelector("#phone");
+        var iti = window.intlTelInput(input, {
+            initialCountry: 'au',
+            separateDialCode: true,
+            utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
+        });
 
-    // Update hidden input and flag icon when the country changes
-    input.addEventListener('countrychange', function() {
-        var countryData = iti.getSelectedCountryData();
-        $('#country_code').val('+' + countryData.dialCode);
-        $('#country_shortname').val(countryData.iso2);
-        $('#flag-icon').removeClass().addClass('flag-icon flag-icon-' + countryData.iso2);
-    });
+        // Update hidden input and flag icon when the country changes
+        input.addEventListener('countrychange', function() {
+            var countryData = iti.getSelectedCountryData();
+            $('#country_code').val('+' + countryData.dialCode);
+            $('#country_shortname').val(countryData.iso2);
+            $('#flag-icon').removeClass().addClass('flag-icon flag-icon-' + countryData.iso2);
+        });
 
-  $(document).ready(function() {
+        $(document).ready(function() {
 
-    var initialCountryCode = '{{ old('country_code') }}';
-    var initialPhoneNumber = '{{ old('phone_number') }}';
+            var initialCountryCode = '{{ old('
+            country_code ') }}';
+            var initialPhoneNumber = '{{ old('
+            phone_number ') }}';
 
-    if (initialCountryCode) {
-    iti.setNumber(initialCountryCode);
-    }
+            if (initialCountryCode) {
+                iti.setNumber(initialCountryCode);
+            }
 
-    if (initialPhoneNumber) {
-        iti.setNumber(initialPhoneNumber);
-    }
-});
-    ;
+            if (initialPhoneNumber) {
+                iti.setNumber(initialPhoneNumber);
+            }
+        });;
 
     });
 </script>

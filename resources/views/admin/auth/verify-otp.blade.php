@@ -44,11 +44,14 @@
           </div>
 
           <div class=" col-lg-6 bg-white px-5 py-5">
+          <x-language-switcher />
+
             <div class="card-body login-form px-5 py-5">
               <div class="text-center">
                 <img src="{{asset('admin/images/auth/new_logo.png')}}" class="img-fluid" alt="">
-                <h1 class=" heading-primary my-3">{{ __('Reset Password') }}</h1>
-                <p class="grey">Don’t worry happens to all of us. enter your email below to recover your password</p>
+                <h1 class="heading-primary my-3">{{ __('auth.reset_password') }}</h1>
+               <p class="grey">{{ __('auth.reset_password_description') }}</p>
+
               </div>
 
               <form method="POST" action="{{ route('user.verify') }}">
@@ -56,17 +59,20 @@
                 <div class="form-group">
                   <input type="hidden" name="email" value="{{ $email }}">
 
-                  <label for="otp">Enter Code</label>
+                 <label for="otp">{{ __('auth.enter_code') }}</label>
+
                   <input type="text" name="otp" id="otp" class="form-control" required maxlength="6">
                 </div>
 
                 <div class="mt-2 text-center">
-                  <small>Didn’t receive a code?
-                    <a href="{{ route('user.resend') }}" class="text-danger">Resend</a>
+                  <small>
+                    {{ __('auth.didnt_receive_code') }}
+                    <a href="{{ route('user.resend') }}" class="text-danger">{{ __('auth.resend') }}</a>
                   </small>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary w-100 mt-3">Continue</button>
+                 <button type="submit" class="btn btn-primary w-100 mt-3">{{ __('auth.continue') }}</button>
+
                 </div>
 
               </form>

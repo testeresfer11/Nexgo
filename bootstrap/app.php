@@ -13,13 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api'
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+          'setLocal' => \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // ✅ Aliases
         $middleware->alias([
-            'admin' => Admin::class,
-            'user' => User::class,
             'CustomSanctumMiddleware' => \App\Http\Middleware\CustomSanctumMiddleware::class,
         ]);
+
+        // ✅ If needed, stateful API setup
         $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+

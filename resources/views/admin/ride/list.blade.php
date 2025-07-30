@@ -1,232 +1,192 @@
 @extends('admin.layouts.app')
-@section('title', 'Rides')
+@section('title', __('admin.rides'))
 @section('breadcrum')
 <div class="page-header">
-    <h3 class="page-title">Rides</h3>
+    <h3 class="page-title">{{ __('admin.rides') }}</h3>
     <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Rides</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Rides</li>
-    </ol>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{ __('admin.rides') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ __('admin.rides') }}</li>
+        </ol>
     </nav>
 </div>
 @endsection
+
 @section('content')
 <div class="row">
     <div class="col-lg-12 grid-margin table-card stretch-card">
-      <div class="card">
-        <x-alert />
-       
-        <div class="card-body">
-          <div class="px-4 py-4">
-          <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
-            <h4 class="card-title">Rides Management</h4>
-            <!-- <a href="{{route('admin.ride.add')}}"><button type="button" class="btn default-btn btn-md">
-              <span class="menu-icon">+ Add User</span></button></a> -->
-          </div>
-          <div class="custom-search">
-              <form action="{{ route('admin.ride.list') }}" method="GET" id="searchForm">
-              <div class="d-flex align-items-end justify-content-between search-gap">
-                  <!-- Search Input -->
-              
-                  <div class="d-flex align-items-end">
-                        <div class="form-group mb-0">
-                            <label for="start_date">From Date</label>
-                            <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control" placeholder="Start Date">
-                        </div>
+        <div class="card">
+            <x-alert />
 
-                        <div class="form-group px-2 mb-0">
-                            <label for="end_date">To Date</label>
-                            <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control" placeholder="End Date">
-                        </div>
+            <div class="card-body">
+                <div class="px-4 py-4">
+                    <div class="d-flex justify-content-between" style="padding-bottom: 16px;">
+                        <h4 class="card-title">{{ __('admin.rides_management') }}</h4>
+                    </div>
+
+                    <div class="custom-search">
+                        <form action="{{ route('admin.ride.list') }}" method="GET" id="searchForm">
+                            <div class="d-flex align-items-end justify-content-between search-gap">
+                                <div class="d-flex align-items-end">
+                                    <div class="form-group mb-0">
+                                        <label for="start_date">{{ __('admin.from_date') }}</label>
+                                        <input type="date" id="start_date" name="start_date" value="{{ request()->get('start_date') }}" class="form-control">
+                                    </div>
+
+                                    <div class="form-group px-2 mb-0">
+                                        <label for="end_date">{{ __('admin.to_date') }}</label>
+                                        <input type="date" id="end_date" name="end_date" value="{{ request()->get('end_date') }}" class="form-control">
+                                    </div>
+
+                                    <script>
+                                        document.getElementById('start_date').addEventListener('focus', function() { this.showPicker(); });
+                                        document.getElementById('end_date').addEventListener('focus', function() { this.showPicker(); });
+                                    </script>
+
+                                    <select name="status" class="form-control">
+                                        <option value="">{{ __('admin.status') }}</option>
+                                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>{{ __('admin.active') }}</option>
+                                        <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>{{ __('admin.confirmed') }}</option>
+                                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('admin.completed') }}</option>
+                                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>{{ __('admin.cancelled') }}</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex">
+                                    <input type="text" name="search" placeholder="{{ __('admin.search') }}..." value="{{ request('search') }}">
+                                    <button type="submit" class="btn default-btn mx-2 btn-md">{{ __('admin.search') }}</button>
+                                    <button type="button" class="btn secondary-btn btn-md" id="resetBtn">{{ __('admin.reset') }}</button>
+                                </div>
+                            </div>
+                        </form>
 
                         <script>
-                            // Automatically open the calendar when clicking on the input field
-                            document.getElementById('start_date').addEventListener('focus', function() {
-                                this.showPicker();
-                            });
-                            
-                            document.getElementById('end_date').addEventListener('focus', function() {
-                                this.showPicker();
+                            document.getElementById('resetBtn').addEventListener('click', function() {
+                                document.getElementById('searchForm').reset();
+                                window.location.href = "{{ route('admin.ride.list') }}";
                             });
                         </script>
-
-                      <!-- Status Filter -->
-                      <select name="status" class="form-control">
-                          <option value="">All</option>
-                          <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                          <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                          <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                          <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                      </select>
                     </div>
-                <div class="d-flex">
-                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}">
-                  <button type="submit" class="btn default-btn mx-2 btn-md">Search</button>
-                  <button type="button" class="btn secondary-btn btn-md" id="resetBtn">Reset</button>
                 </div>
-              </div>
-          </form>
 
-          <script>
-              // Reset button click event
-              document.getElementById('resetBtn').addEventListener('click', function() {
-                  // Reset form inputs
-                  document.getElementById('searchForm').reset();
+                <div class="table-responsive mt-0">
+                    <table class="table table-striped" id="filterData">
+                        <thead>
+                            <tr>
+                                <th>{{ __('admin.ride_id') }}</th>
+                                <th>{{ __('admin.driver_name') }}</th>
+                                <th>{{ __('admin.origin') }}</th>
+                                <th>{{ __('admin.destination') }}</th>
+                                <th>{{ __('admin.total_seats') }}</th>
+                                <th>{{ __('admin.seats_available') }}</th>
+                                <th>{{ __('admin.departure_date') }}</th>
+                                <th>{{ __('admin.ride_status') }}</th>
+                                <th>{{ __('admin.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($rides as $ride)
+                            <tr>
+                                <td>{{ $ride->ride_id }}</td>
+                                <td><a href="{{ route('admin.user.view', ['id' => $ride->user_id]) }}">{{ $ride->first_name }} {{ $ride->last_name }}</a></td>
+                                <td>{{ $ride->departure_city }}</td>
+                                <td>{{ $ride->arrival_city }}</td>
+                                <td>{{ $ride->available_seats }}</td>
+                                <td>{{ $ride->available_seats - $ride->seat_booked <= 0 ? __('admin.full') : ($ride->available_seats - $ride->seat_booked) }}</td>
+                                <td>{{ $ride->departure_time }}</td>
+                                <td>{{ $ride->getStatusTextnew() }}</td>
+                                <td>
+                                    <span class="menu-icon">
+                                        <a href="{{ route('admin.ride.view', ['id' => $ride->ride_id]) }}" title="{{ __('admin.view') }}" class="text-primary"><i class="mdi mdi-eye"></i></a>
+                                    </span>
+                                    <span class="menu-icon mx-2">
+                                        <a href="#" title="{{ __('admin.delete') }}" class="text-danger deleteUser" data-id="{{ $ride->ride_id }}"><i class="mdi mdi-delete"></i></a>
+                                    </span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="9" class="no-record"><center>{{ __('admin.no_record_found') }}</center></td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-                  // Reset the form to initial state after clearing inputs
-                  window.location.href = "{{ route('admin.ride.list') }}";  // Redirect to the same page to clear the query parameters
-              });
-          </script>
-
-          </div>
-          </div>
-          <div class="table-responsive mt-0">
-            <table class="table table-striped" id="filterData">
-              <thead>
-                <tr>
-                  <th> Ride ID </th>
-                  <th> Driver Name </th>
-                  <th> Origin </th>
-                  <th> Destination </th>
-                  <th> Total Seats </th>
-                  <th> Seats Available </th>
-                   <th> departure Date </th>
-                  <th> Ride status </th>
-                  <th> Actions </th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                @forelse ($rides as $key => $ride)
-                
-                  <tr>
-                    <td>{{$ride->ride_id}}</td>
-                    <td> <a href="{{route('admin.user.view',['id' => $ride->user_id])}}" > {{$ride->first_name}} {{$ride->last_name}} </a> </td>
-                    <td>{{$ride->departure_city}}</td>
-                    <td>{{$ride->arrival_city}}</td>
-                    <td>{{$ride->available_seats}}</td>
-
-                    <td>{{ $ride->available_seats - $ride->seat_booked <= 0 ? 'Full' : ($ride->available_seats - $ride->seat_booked) }}</td>
-                      <td>{{ $ride->departure_time}}</td>
-
-                    <td>{{ $ride->getStatusTextnew() }}</td>
-
-                    <td>
-                      <span class="menu-icon">
-                        <a href="{{route('admin.ride.view',['id' => $ride->ride_id])}}" title="View" class="text-primary"><i class="mdi mdi-eye"></i></a>
-                      </span>
-                      {{--<span class="menu-icon">
-                        <a href="{{route('admin.ride.edit',['id' => $ride->ride_id])}}" title="Edit" class="text-success"><i class="mdi mdi-pencil"></i></a>
-                      </span>&nbsp;&nbsp;--}}
-                      <span class="menu-icon mx-2">
-                        <a href="#" title="Delete" class="text-danger deleteUser" data-id="{{$ride->ride_id}}"><i class="mdi mdi-delete"></i></a>
-                      </span> 
-                    </td>
-                  </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="no-record"> <center>No record found </center></td>
-                </tr>
-                @endforelse
-              </tbody>
-            </table>
-          </div>
-          <div class="custom_pagination">
-              {{ $rides->appends(request()->query())->links('pagination::bootstrap-4') }}
+                <div class="custom_pagination">
+                    {{ $rides->appends(request()->query())->links('pagination::bootstrap-4') }}
+                </div>
             </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+@endsection
 
-
-
-
-  @endsection
 @section('scripts')
-<!-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#filterData').DataTable({
-              layout: {
-                    bottomEnd: null,
-                    topStart: null
-                }
+    $('.deleteUser').on('click', function() {
+        var ride_id = $(this).data('id');
+        Swal.fire({
+            title: "{{ __('admin.are_you_sure') }}",
+            text: "{{ __('admin.confirm_delete_text') }}",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#2ea57c",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "{{ __('admin.yes_delete') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/admin/ride/delete/" + ride_id,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.status == "success") {
+                            toastr.success(response.message);
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                });
+            }
         });
     });
-</script> -->
-<script>
-  $('.deleteUser').on('click', function() {
-    var user_id = $(this).attr('data-id');
-      Swal.fire({
-          title: "Are you sure?",
-          text: "You want to delete the Ride?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#2ea57c",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!"
+
+    $('.switch').on('click', function() {
+        var status = $(this).data('value');
+        var action = status == 1 ? 0 : 1;
+        var id = $(this).data('id');
+
+        Swal.fire({
+            title: "{{ __('admin.are_you_sure') }}",
+            text: "{{ __('admin.confirm_status_change') }}",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#2ea57c",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "{{ __('admin.yes_mark_status') }}"
         }).then((result) => {
-          if (result.isConfirmed) {
-              $.ajax({
-                  url: "/admin/ride/delete/" + user_id,
-                  type: "GET", 
-                  success: function(response) {
-                    console.log(response); // Check the server response here
-                    if (response.status == "success") {
-                        toastr.success(response.message);
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        toastr.error(response.message); // This should show the error message
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/admin/user/changeStatus",
+                    type: "GET",
+                    data: { id: id, status: action },
+                    success: function(response) {
+                        if (response.status == "success") {
+                            toastr.success(response.message);
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(error) {
+                        console.log('error', error);
                     }
-                  }
-              });
-          }
-      });
-  });
-
-  $('.switch').on('click', function() {
-    var status = $(this).data('value');
-    var action = (status == 1) ? 0 : 1;
-    var id = $(this).data('id');
-
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to change the status of the user?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#2ea57c",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, mark as status"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: "/admin/user/changeStatus",
-                type: "GET",
-                data: { id: id, status: action },
-                success: function(response) {
-                    if (response.status == "success") {
-                      toastr.success(response.message);
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                      toastr.error(response.message);
-                    }
-                },
-                error: function(error) {
-                    console.log('error', error);
-                }
-            });
-        } else {
-            $('.switch').prop('checked', !$('.switch').prop('checked'));
-        }
+                });
+            } else {
+                $('.switch').prop('checked', !$('.switch').prop('checked'));
+            }
+        });
     });
-  });
-
 </script>
-
-@stop
+@endsection
