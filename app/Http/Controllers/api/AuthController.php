@@ -25,68 +25,68 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        
         try {
-
             $validator = Validator::make($request->all(), [
-                'email' => 'required|string|email|max:255|unique:users',
-                'first_name' => 'required|string|',   
-                'last_name'  => 'required|string|', 
+                'email' => 'nullable|email|max:255|unique:users,email',
+                'phone' => 'required|string|max:15|unique:users,phone',
+                'first_name' => 'required|string',
+                'last_name'  => 'required|string',
                 'password' => 'required|string|min:8|confirmed',
-                'age'  => 'required'
+                'age'  => 'required|date'
             ]);
-
+    
             if ($validator->fails()) {
                 return $this->apiResponse('error', 422, $validator->errors()->first());
             }
-
+    
             $user = User::create([
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
-                'dob' => $request->age,
-                'first_name' => $request->first_name,   
+                'email'      => $request->email,
+                'phone'      => $request->phone,
+                'password'   => Hash::make($request->password),
+                'dob'        => $request->age,
+                'first_name' => $request->first_name,
                 'last_name'  => $request->last_name
             ]);
-            
-           
-
+    
             if ($user) {
-
-                $notifications=[
-                    'user_id' => $user->user_id,
-                    'type'  => 'user registration',
-                    'message' => 'New User registered',
-                    'timestamp' => now(),
-                 ];
-
-                //  print_r($user);
-                // die();
-                $name=$user->first_name;
-                Mail::to($user->email)->send(new WelcomeRegistration($name));
-
-                
-
-                Notifications::create($notifications);
-
-                
-
+                Notifications::create([
+                    'user_id'  => $user->id,
+                    'type'     => 'user registration',
+                    'message'  => 'New User registered',
+                    'timestamp'=> now(),
+                ]);
+    
+                if (!empty($user->email)) {
+                    Mail::to($user->email)->send(new WelcomeRegistration($user->first_name));
+                }
+    
                 do {
                     $otp = rand(1000, 9999);
-                } while (OtpManagement::where('otp', $otp)->count());
-                
-                
-
-                OtpManagement::updateOrCreate(['email' => $user->email], ['otp' => $otp]);
-
-                Mail::to($user->email)->send(new OtpMail($otp));
-                
-
-                return $this->apiResponse('success', 200, 'User ' . config('constants.SUCCESS.VERIFY_SEND'), ['email' => $user->email]);
+                } while (OtpManagement::where('otp', $otp)->exists());
+    
+                OtpManagement::updateOrCreate(
+                    ['phone' => $user->phone],
+                    ['otp' => $otp, 'email' => $user->email]
+                );
+    
+                if (!empty($user->email)) {
+                    Mail::to($user->email)->send(new OtpMail($otp));
+                }
+    
+                // Send OTP to phone (use your preferred SMS gateway)
+                // Example placeholder:
+                // SmsService::send($user->phone, "Your OTP is $otp");
+    
+                return $this->apiResponse('success', 200, 'OTP has been sent for verification', [
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                ]);
             }
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
         }
     }
+    
 
     public function resendOtp(Request $request)
     {
@@ -218,88 +218,6 @@ class AuthController extends Controller
         return $this->apiResponse('error', 500, $e->getMessage());
     }
 }
-
-
-// Redirect to Google
-    /*public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }*/
-
-    // Handle Google Callback
-    /*public function handleGoogleCallback()
-    {
-        $googleUser = Socialite::driver('google')->user();
-
-        return $this->handleUserLogin($googleUser, 'google');
-    }*/
-
-    // Redirect to Facebook
-    /*public function redirectToFacebook()
-    {
-        return Socialite::driver('facebook')->redirect();
-    }*/
-
-    // Handle Facebook Callback
-    /*public function handleFacebookCallback()
-    {
-        $facebookUser = Socialite::driver('facebook')->user();
-
-        return $this->handleUserLogin($facebookUser, 'facebook');
-    }*/
-
-    /*private function handleUserLogin($socialUser, $provider)
-    {
-        // Check if the user already exists
-        $user = User::where('email', $socialUser->getEmail())->first();
-
-        if ($user) {
-            // User exists, generate access token
-            $accessToken = $user->createToken('AuthToken')->plainTextToken;
-
-            // Prepare the response data
-            $data = [
-                'access_token' => $accessToken,
-                'user' => [
-                    'id' => $user->user_id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                ],
-            ];
-
-            // Return the response with the access token and user data
-            return response()->json(['status' => 'success', 'message' => 'Login successful', 'data' => $data], 200);
-        }
-
-        // If the user does not exist, create a new one
-        $user = User::create([
-            'first_name' => $socialUser->getName(),
-            'email' => $socialUser->getEmail(),
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('password'),// Generate a random password
-            'provider' => $provider,
-            'provider_id' => $socialUser->getId(),
-        ]);
-
-        // Log the new user in
-       
-
-        // Generate access token
-        $accessToken = $user->createToken('AuthToken')->plainTextToken;
-
-        // Prepare the response data
-        $data = [
-            'access_token' => $accessToken,
-            'user' => [
-                'id' => $user->user_id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-        ];
-
-        // Return the response with the access token and user data
-        return $this->apiResponse('success', 200, config('constants.SUCCESS.LOGIN'), $data);
-}*/
 
 
 

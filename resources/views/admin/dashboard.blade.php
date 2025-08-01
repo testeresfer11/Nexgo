@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Dashboard')
+@section('title', __('admin.dashboard') )
 @section('breadcrum')
 <div class="page-header">
     <h3 class="page-title"> {{ __('admin.dashboard') }} </h3>

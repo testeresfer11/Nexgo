@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AdminLoginController extends Controller
 {
@@ -13,27 +14,25 @@ class AdminLoginController extends Controller
         return view('auth.admin_login');
     }
 
-        public function login(Request $request)
+    public function login(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|min:6',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            if ($user->hasRole('admin')) {
-                return redirect()->intended(route('admin.dashboard'));
-            } else {
-                Auth::logout();
-                return back()->withErrors(['email' => 'You are not authorized to access this area.']);
-            }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ]);
-    }
+        $credentials = $request->only('email', 'password');
 
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+    }
+    
    
 }

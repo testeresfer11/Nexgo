@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Profile Detail')
+@section('title',  __('admin.profile'))
 @section('breadcrum')
 <div class="page-header">
     <h3 class="page-title">{{ __('admin.settings') }}</h3>

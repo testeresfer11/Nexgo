@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\api\PaymentController;
 use App\Http\Controllers\api\StripeController;
+use App\Http\Controllers\api\OrangeMoneyController;
+use App\Http\Controllers\api\MTNMoMoController;
+
 
 
 Route::get('/user', function (Request $request) {
@@ -192,11 +195,21 @@ Route::middleware(['CustomSanctumMiddleware'])->group(function () {
     Route::controller(PayPalController::class)->group(function () {
         Route::post('paypal/create-payment','createPayment')->name('paypal.createPayment');
         Route::post('paypal/execute-payment','executePayment')->name('paypal.executePayment');
-
+        
 
     });
 
+    Route::controller(OrangeMoneyController::class)->group(function () {
+        Route::post('orange-money/pay','pay')->name('orange.pay');
+        Route::get('orange-money/callback','callback')->name('orange.callback');
+        Route::get('orange-money/cancel','cancel')->name('orange.cancel');
+        Route::post('orange-money/webhook','webhook')->name('orange.webhook');
+    });
 
+    Route::controller(MTNMoMoController::class)->group(function () {
+        Route::post('/mtn/pay', 'pay');
+        Route::get('/mtn/status/{transactionId}', 'checkStatus');
+    });
 
      Route::controller(SearchHistoryController::class)->group(function () {
         Route::post('save-search-histories','store');
@@ -214,17 +227,17 @@ Route::middleware(['CustomSanctumMiddleware'])->group(function () {
 
          });
 
-    Route::post('/twilio/token', [TwilioChatController::class, 'createAccessToken']);
-    Route::post('/create-chat-token', [TwilioChatController::class, 'createChatToken']);
-    Route::post('/twilio/channel/add-user', [TwilioChatController::class, 'addUserToChannel']);
-    Route::get('/twilio/channels', [TwilioChatController::class, 'listChannels']);
-    Route::post('/twilio/channel/message', [TwilioChatController::class, 'sendMessage']);
-    Route::get('/twilio/channel/{channel_sid}/messages', [TwilioChatController::class, 'getMessages']); 
-    Route::get('/get-chat-users', [TwilioChatController::class, 'getChatUsers']); 
-    Route::post('/chat/block-unblock', [TwilioChatController::class, 'blockUnblockChat']);
-    Route::post('/send-notification', [TwilioChatController::class, 'sendNotification']);
-    Route::get('/getUnreadMessageCount/{conversationSid}', [TwilioChatController::class, 'getUnreadMessageCount']);
-    Route::post('/mark-messages-read', [TwilioChatController::class, 'markAllMessagesAsRead']);
+        Route::post('/twilio/token', [TwilioChatController::class, 'createAccessToken']);
+        Route::post('/create-chat-token', [TwilioChatController::class, 'createChatToken']);
+        Route::post('/twilio/channel/add-user', [TwilioChatController::class, 'addUserToChannel']);
+        Route::get('/twilio/channels', [TwilioChatController::class, 'listChannels']);
+        Route::post('/twilio/channel/message', [TwilioChatController::class, 'sendMessage']);
+        Route::get('/twilio/channel/{channel_sid}/messages', [TwilioChatController::class, 'getMessages']); 
+        Route::get('/get-chat-users', [TwilioChatController::class, 'getChatUsers']); 
+        Route::post('/chat/block-unblock', [TwilioChatController::class, 'blockUnblockChat']);
+        Route::post('/send-notification', [TwilioChatController::class, 'sendNotification']);
+        Route::get('/getUnreadMessageCount/{conversationSid}', [TwilioChatController::class, 'getUnreadMessageCount']);
+        Route::post('/mark-messages-read', [TwilioChatController::class, 'markAllMessagesAsRead']);
 
 });
 

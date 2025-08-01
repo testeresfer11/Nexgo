@@ -60,6 +60,18 @@ return [
         'api_secret' => env('TWILIO_API_SECRET'),
         'chat_service_sid' => env('TWILIO_CHAT_SERVICE_SID'),
     ],
+    'orange' => [
+    'client_id' => env('ORANGE_CLIENT_ID'),
+    'client_secret' => env('ORANGE_CLIENT_SECRET'),
+    'merchant_key' => env('ORANGE_MERCHANT_KEY'),
+    ],
+    'mtn' => [
+    'primary_key' => env('MTN_PRIMARY_KEY'),
+    'api_user' => env('MTN_API_USER'),
+    'api_secret' => env('MTN_API_SECRET'),
+    'callback_url' => env('MTN_CALLBACK_URL'),
+    'target_env' => env('MTN_TARGET_ENV', 'sandbox'),
+],
 
 
 

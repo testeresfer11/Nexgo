@@ -42,12 +42,22 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
+
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                         <div class="card">
                             <div class="card-body px-5">
                                 <div class="login-title d-flex align-items-center justify-content-between">
                                 <p class="f-18">{{ __('auth.welcome') }} <span class="dark bold">Nexgo</span></p>
                                 <x-language-switcher />
-
                                 </div>
                                 <h2 class="pb-4 f-38">{{ __('auth.sign_in') }}</h2>
                                 <form action="{{ route('login') }}" method="POST" id="loginForm">
@@ -127,7 +137,6 @@
             },
             password: {
                 required: true,
-                minlength: 6,
             },
         },
         messages: {

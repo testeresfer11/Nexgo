@@ -6,9 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "bmatovu/laravel-mtn-momo": "^4.4",
         "guzzlehttp/guzzle": "^7.9",
         "kreait/firebase-php": "*",
         "laravel/framework": "^11.9",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.15",
         "laravel/tinker": "^2.9",

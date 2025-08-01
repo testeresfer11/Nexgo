@@ -21,7 +21,6 @@ class AuthController extends Controller
 
                 $user_id= Auth::id();
                 $user = User::where('user_id',$user_id)->first();
-                $country;
                 $country_shortname='';
                 if($user->country_code != "")
                 {
@@ -42,10 +41,10 @@ class AuthController extends Controller
             } elseif ($request->isMethod('post')) {
 
                 $validator = Validator::make($request->all(), [
-                    'first_name'    => 'required|string|max:255',
-                    'email'         => 'required|email:rfc,dns',
-                    'phone_number'  => 'numeric|nullable',
-                    'profile_picture'       => 'image|max:2048|nullable'
+                    'first_name'     => 'required|string|max:255',
+                    'email'          => 'required|email:rfc,dns',
+                    'phone_number'   => 'numeric|nullable',
+                    'profile_picture' => 'image|max:2048|nullable'
                 ]);
 
                 if ($validator->fails()) {
