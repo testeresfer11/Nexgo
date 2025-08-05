@@ -26,13 +26,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
+            $request->merge([
+                'email' => $request->email ?: null,
+                'phone' => $request->phone ?: null,
+            ]);
+    
             $validator = Validator::make($request->all(), [
-                'email' => 'nullable|email|max:255|unique:users,email',
-                'phone' => 'required|string|max:15|unique:users,phone',
-                'first_name' => 'required|string',
-                'last_name'  => 'required|string',
-                'password' => 'required|string|min:8|confirmed',
-                'age'  => 'required|date'
+                'email' => 'nullable|email|max:255|unique:users,email|required_without:phone',
+                'phone' => 'nullable|string|max:15|unique:users,phone|required_without:email',
             ]);
     
             if ($validator->fails()) {
@@ -40,20 +41,17 @@ class AuthController extends Controller
             }
     
             $user = User::create([
-                'email'      => $request->email,
-                'phone'      => $request->phone,
-                'password'   => Hash::make($request->password),
-                'dob'        => $request->age,
-                'first_name' => $request->first_name,
-                'last_name'  => $request->last_name
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make(Str::random(10)), 
             ]);
     
             if ($user) {
                 Notifications::create([
-                    'user_id'  => $user->id,
-                    'type'     => 'user registration',
-                    'message'  => 'New User registered',
-                    'timestamp'=> now(),
+                    'user_id'   => $user->id,
+                    'type'      => 'user registration',
+                    'message'   => 'New User registered',
+                    'timestamp' => now(),
                 ]);
     
                 if (!empty($user->email)) {
@@ -73,19 +71,19 @@ class AuthController extends Controller
                     Mail::to($user->email)->send(new OtpMail($otp));
                 }
     
-                // Send OTP to phone (use your preferred SMS gateway)
-                // Example placeholder:
-                // SmsService::send($user->phone, "Your OTP is $otp");
+                // Example: SmsService::send($user->phone, "Your OTP is $otp");
     
                 return $this->apiResponse('success', 200, 'OTP has been sent for verification', [
                     'phone' => $user->phone,
                     'email' => $user->email,
                 ]);
             }
+    
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
         }
     }
+    
     
 
     public function resendOtp(Request $request)
@@ -171,54 +169,74 @@ class AuthController extends Controller
      * createdDate  : 12-06-2024
      * purpose      : login the user
     */
-    public function login(Request $request){
-    try {
-        $validate = Validator::make($request->all(), [
-            'email' => 'required|email:rfc,dns|exists:users,email',
-            'password' => 'required',
-            'fcm_token' => 'required',
-            'device_type' => 'required',
-        ]);
-
-        if ($validate->fails()) {
-            return $this->apiResponse('error', 422, $validate->errors()->first());
-        }
-
-        $credentials = $request->only(['email', 'password']);
-        $user = User::where('email', $request->email)->whereNull('deleted_at')->first();
-
-        if ($user) {
+    public function login(Request $request)
+    {
+        try {
+            // Step 1: Validate input
+            $validator = Validator::make($request->all(), [
+                'email' => 'nullable|email|exists:users,email',
+                'phone' => 'nullable|string|exists:users,phone',
+            ]);
+    
+            $validator->after(function ($validator) use ($request) {
+                if (empty($request->email) && empty($request->phone)) {
+                    $validator->errors()->add('email', 'Either email or phone is required.');
+                    $validator->errors()->add('phone', 'Either email or phone is required.');
+                }
+            });
+    
+            if ($validator->fails()) {
+                return $this->apiResponse('error', 422, $validator->errors()->first());
+            }
+    
+            // Step 2: Fetch user by email or phone
+            $user = User::when($request->email, fn($q) => $q->where('email', $request->email))
+                        ->when($request->phone, fn($q) => $q->where('phone', $request->phone))
+                        ->whereNull('deleted_at')
+                        ->first();
+    
+            if (!$user) {
+                return $this->apiResponse('error', 404, 'User not found.');
+            }
+    
             if ($user->status == 0) {
-                return $this->apiResponse('error', 402, 'Your account has been blocked. Contact Administrator for more information.', $user);
+                return $this->apiResponse('error', 403, 'Your account has been blocked. Contact Administrator.');
             }
-
-            if (empty($user->email_verified_at)) {
-                return $this->apiResponse('error', 200, config('constants.ERROR.ACCOUNT_ISSUE'), $user);
+    
+            // Step 3: Generate unique OTP
+            do {
+                $otp = rand(1000, 9999);
+            } while (OtpManagement::where('otp', $otp)->exists());
+    
+            // Step 4: Save OTP
+            OtpManagement::updateOrCreate(
+                ['email' => $user->email, 'phone' => $user->phone],
+                ['otp' => $otp]
+            );
+    
+            // Step 5: Send OTP
+            if (!empty($request->email)) {
+                Mail::to($user->email)->send(new OtpMail($otp));
+                $sentTo = 'email';
             }
-        }
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $user->fcm_token = $request->fcm_token; // Fixed the token variable name
-            $user->device_type = $request->device_type; 
-            $user->save();
-
-            $data = [
-                'access_token' => $user->createToken('AuthToken')->plainTextToken,
-                'id' => $user->user_id,
+    
+            if (!empty($request->phone)) {
+                // Replace with your SMS service
+                // SmsService::send($user->phone, "Your OTP is $otp");
+                $sentTo = 'phone';
+            }
+    
+            return $this->apiResponse('success', 200, 'OTP has been sent for verification.', [
                 'email' => $user->email,
-            ];
-
-            return $this->apiResponse('success', 200, config('constants.SUCCESS.LOGIN'), $data);
-        } else {
-            return $this->apiResponse('error', 401, config('constants.ERROR.INVALID_CREDENTIAL'), null);
+                'phone' => $user->phone,
+                'otp_sent_to' => $sentTo ?? null,
+            ]);
+    
+        } catch (\Exception $e) {
+            return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
         }
-
-    } catch (\Exception $e) {
-        return $this->apiResponse('error', 500, $e->getMessage());
     }
-}
-
+    
 
 
   public function handleSocialLogin(Request $request){
