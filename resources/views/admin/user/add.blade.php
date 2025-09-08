@@ -81,77 +81,55 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Enter Password" name="password">
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
+                      
 
-                                <div class="col-md-6">
-                                    <label for="passwordConfirmation">Password Confirmation</label>
-                                    <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="passwordConfirmation" placeholder="Confirm Password" name="password_confirmation">
-                                    @error('password_confirmation')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
+                      <div class="row">
+                        <!-- Profile Picture -->
+                        <div class="col-md-6">
+                            <label for="profile_picture">Profile Picture</label>
+                            <input type="file" id="profile_picture" name="profile_picture" class="form-control file-upload-info" accept="image/*" onchange="previewProfile(event)">
+                            <br>
+                            <!-- Preview Container (hidden by default) -->
+                            <div id="preview_container" style="display:none; margin-top:10px;">
+                                <strong>Preview:</strong><br>
+                                <img id="preview_img" src="" width="200" height="200" style="border:1px solid #ccc; padding:5px;">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="row">
-                                <!-- Profile Picture -->
-                                <div class="col-md-6">
-                                    <label for="profile_picture">Profile Picture</label>
-                                    <input type="file" name="profile_picture" class="form-control file-upload-info" accept="image/*">
-                                </div>
+                    <script>
+                        function previewProfile(event) {
+                            const previewContainer = document.getElementById('preview_container');
+                            const previewImg = document.getElementById('preview_img');
+                            
+                            // Show container
+                            previewContainer.style.display = "block";
 
-                                <!-- Driver's License -->
-                                <div class="col-md-6">
-                                    <label for="license">Driver's License</label>
-                                    <input type="file" name="license" class="form-control file-upload-info" accept="image/*">
-                                </div>
+                            // Display selected image
+                            previewImg.src = URL.createObjectURL(event.target.files[0]);
+                        }
+                    </script>
+
+
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" 
+                                       class="form-control @error('dob') is-invalid @enderror" 
+                                       id="dob" 
+                                       name="dob" 
+                                       value="{{ old('dob') }}">
+                                @error('dob')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="row">
-                                <!-- National ID / Passport -->
-                                <div class="col-md-6">
-                                    <label for="national_id">National ID / Passport</label>
-                                    <input type="file" name="national_id" class="form-control file-upload-info" accept="image/*">
-                                </div>
-
-                                <!-- Technical Inspection Certificate -->
-                                <div class="col-md-6">
-                                    <label for="technical_inspection_certificate">Technical Inspection Certificate</label>
-                                    <input type="file" name="technical_inspection_certificate" class="form-control file-upload-info" accept="image/*">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="row">
-                                <!-- Registration Certificate -->
-                                <div class="col-md-6">
-                                    <label for="registration_certificate">Registration Certificate</label>
-                                    <input type="file" name="registration_certificate" class="form-control file-upload-info" accept="image/*">
-                                </div>
-
-                                <!-- Insurance -->
-                                <div class="col-md-6">
-                                    <label for="insurance">Insurance</label>
-                                    <input type="file" name="insurance" class="form-control file-upload-info" accept="image/*">
-                                </div>
-                            </div>
-                        </div>
 
 
                         <div class="form-group">
@@ -187,12 +165,12 @@
                 first_name: {
                     required: true,
                     noSpace: true,
-                    minlength: 3
+                    
                 },
                 last_name: {
                     required: true,
                     noSpace: true,
-                    minlength: 3
+                  
                 },
                 email: {
                     required: true,
@@ -200,22 +178,17 @@
                     noSpace: true
                 },
                 phone_number: {
-                    required: true,
                     number: true,
                     minlength: 8,
                     maxlength: 15
                 },
-                password: {
-                    required: true,
-                    required: true,
-                    minlength: 6
-                },
-                password_confirmation: {
-                    required: true,
-                    equalTo: "#password"
-                },
+                
                 profile_picture: {
                     required: false
+
+                },
+                 dob: {
+                    required: true
 
                 }
             },
@@ -237,15 +210,8 @@
                     number: "{{ __('validation.phone_numeric') }}",
                     minlength: "{{ __('validation.phone_min') }}",
                     maxlength: "{{ __('validation.phone_max') }}"
-                },
-                password: {
-                    required: "{{ __('validation.password_required') }}",
-                    minlength: "{{ __('validation.password_min') }}"
-                },
-                password_confirmation: {
-                    required: "{{ __('validation.confirm_password_required') }}",
-                    equalTo: "{{ __('validation.passwords_not_match') }}"
                 }
+              
             },
 
             errorElement: 'span',
@@ -273,7 +239,7 @@
 
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
-            initialCountry: 'au',
+            initialCountry: 'cm',
             separateDialCode: true,
             utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
         });

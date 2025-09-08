@@ -144,7 +144,7 @@ public function deletedUser(Request $request){
      * createdDate  : 31-05-2024
      * purpose      : add the user
     */
-  public function add(Request $request) 
+ public function add(Request $request) 
 {
     try {
         if ($request->isMethod('get')) {
@@ -158,13 +158,14 @@ public function deletedUser(Request $request){
                 'last_name'  => 'required|string|max:255',
                 'email' => 'required|email:rfc,dns|unique:users,email',
                 'phone_number' => 'nullable|numeric|digits_between:8,15|unique:users,phone_number',
-                'password' => 'required|min:8|confirmed',
+                'dob' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                ],
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'license' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'national_id' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'technical_inspection_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'registration_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'insurance' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ], [
+                'dob.before_or_equal' => 'User must be at least 18 years old.',
             ]);
 
             if ($validator->fails()) {
@@ -172,22 +173,14 @@ public function deletedUser(Request $request){
             }
 
             // File fields
-            $files = [
-                'profile_picture',
-                'license',
-                'national_id',
-                'technical_inspection_certificate',
-                'registration_certificate',
-                'insurance',
-            ];
-
+            $files = ['profile_picture'];
             $uploaded = [];
 
             foreach ($files as $field) {
                 if ($request->hasFile($field)) {
                     $filename = $field . '_' . time() . '.' . $request->file($field)->extension();
                     $request->file($field)->storeAs('public/users', $filename);
-                    $uploaded[$field] = $filename;
+                    $uploaded[$field] = asset('storage/users/' . $filename);
                 } else {
                     $uploaded[$field] = null;
                 }
@@ -198,17 +191,13 @@ public function deletedUser(Request $request){
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make('secret'),
+                'dob' => $request->dob,
                 'bio' => $request->bio,
                 'country_code' => $request->country_code,
                 'phone_number' => $request->phone_number ?? '',
                 'profile_picture' => $uploaded['profile_picture'],
-                'license' => $uploaded['license'],
-                'national_id' => $uploaded['national_id'],
-                'technical_inspection_certificate' => $uploaded['technical_inspection_certificate'],
-                'registration_certificate' => $uploaded['registration_certificate'],
-                'insurance' => $uploaded['insurance'],
-                'join_date' => Carbon::now()
+                'join_date' => Carbon::now(),
             ]);
 
             return redirect()->route('admin.user.list')->with('success', 'User added successfully.');
@@ -218,6 +207,7 @@ public function deletedUser(Request $request){
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
 }
+
 
     /**End method add**/
 
@@ -343,15 +333,17 @@ public function edit(Request $request, $id)
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'last_name'  => 'required|string|max:255',
                 'email' => 'required|email',
+                'dob' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                ],
                 'phone_number' => 'nullable|numeric|digits_between:8,15|unique:users,phone_number,' . $id . ',user_id',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'license' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'national_id' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'technical_inspection_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'registration_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
-                'insurance' => 'nullable|image|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ], [
+                'dob.before_or_equal' => 'User must be at least 18 years old.',
             ]);
 
             if ($validator->fails()) {
@@ -360,37 +352,37 @@ public function edit(Request $request, $id)
 
             $user = User::findOrFail($id);
 
-            $fileFields = [
-                'profile_picture',
-                'license',
-                'national_id',
-                'technical_inspection_certificate',
-                'registration_certificate',
-                'insurance',
-            ];
+            $fileFields = ['profile_picture'];
 
             foreach ($fileFields as $field) {
                 if ($request->hasFile($field)) {
-                    // Delete old file
+                    // Delete old file if exists
                     $oldFile = $user->{$field};
-                    if ($oldFile && Storage::exists('public/users/' . $oldFile)) {
-                        Storage::delete('public/users/' . $oldFile);
+                    if ($oldFile) {
+                        $relativePath = str_replace(asset('storage') . '/', '', $oldFile);
+                        if (Storage::exists('public/' . $relativePath)) {
+                            Storage::delete('public/' . $relativePath);
+                        }
                     }
 
                     // Upload new file
                     $filename = $field . '_' . time() . '.' . $request->file($field)->extension();
                     $request->file($field)->storeAs('public/users', $filename);
-                    $user->{$field} = $filename;
+
+                    // Save full URL in DB
+                    $user->{$field} = asset('storage/users/' . $filename);
                 }
             }
 
-            // Update user fields
+            // Update other fields
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
             $user->email = $request->email;
+            $user->dob = $request->dob; // ✅ save DOB
             $user->country_code = $request->country_code;
             $user->phone_number = $request->phone_number;
             $user->bio = $request->bio;
+
             $user->save();
 
             return redirect()->route('admin.user.list')->with('success', 'User updated successfully.');
@@ -399,6 +391,8 @@ public function edit(Request $request, $id)
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
 }
+
+
 
 
 
@@ -461,6 +455,8 @@ public function edit(Request $request, $id)
                 return 'Approved';
             case 3:
                 return 'Rejected';
+             case 4:
+            return 'Submitted';
             default:
                 return 'Unknown';
         }

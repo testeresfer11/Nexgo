@@ -21,9 +21,12 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">{{ __('admin.edit_user') }}</h4>
-                <form class="forms-sample" id="edit-user" action="{{ route('admin.user.edit', ['id' => $user->user_id]) }}" method="POST" enctype="multipart/form-data"> @csrf
-                    @method('PUT')
-
+           <form class="forms-sample" 
+              id="edit-user" 
+              action="{{ route('admin.user.edit', ['id' => $user->user_id]) }}" 
+              method="POST" 
+              enctype="multipart/form-data">
+            @csrf
                     <div class="form-group">
                         <label>{{ __('admin.first_name') }}</label>
                         <input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="form-control" placeholder="{{ __('admin.enter_first_name') }}">
@@ -35,33 +38,73 @@
                     </div>
 
                     <div class="form-group">
-                        <label>{{ __('admin.email_address') }}</label>
-                        <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control" placeholder="{{ __('admin.email_address') }}">
+                        <label>{{ __('admin.email') }}</label>
+                        <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control" placeholder="{{ __('admin.email') }}">
                     </div>
 
                     <div class="form-group">
                         <label>{{ __('admin.phone_number') }}</label>
-                        <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" placeholder="{{ __('admin.phone_number') }}">
+                        <input type="text" name="phone_number" value="{{ old('phone', $user->phone_number) }}" class="form-control" placeholder="{{ __('admin.phone_number') }}">
                     </div>
 
                     <div class="form-group">
                         <label>{{ __('admin.profile_upload') }}</label>
-                        <input type="file" name="profile_image" class="form-control">
-                        @if($user->profile_image)
-                        <img src="{{ asset('storage/'.$user->profile_image) }}" width="100" class="mt-2" />
+                        <input type="file" name="profile_picture" id="profileInput" class="form-control" accept="image/*">
+
+                        {{-- Show existing profile picture if available --}}
+                        @if($user->profile_picture)
+                            <img src="{{ $user->profile_picture }}" id="profilePreview" width="100" class="mt-2 d-block" />
+                        @else
+                            <img id="profilePreview" width="100" class="mt-2 d-block" style="display:none;" />
                         @endif
                     </div>
+
+                    {{-- Image Preview Script --}}
+                    <script>
+                        document.getElementById('profileInput').addEventListener('change', function(event) {
+                            let preview = document.getElementById('profilePreview');
+                            let file = event.target.files[0];
+
+                            if (file) {
+                                preview.src = URL.createObjectURL(file);
+                                preview.style.display = 'block';
+                            } else {
+                                preview.src = "";
+                                preview.style.display = 'none';
+                            }
+                        });
+                    </script>
+
+                     <div class="form-group">
+                        <div class="row">
+                        
+                            <div class="col-md-6">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" 
+                                       class="form-control @error('dob') is-invalid @enderror" 
+                                       id="dob" 
+                                       name="dob" 
+                                       value="{{ old('dob', $user->dob) }}">
+                                @error('dob')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
 
                     <div class="form-group">
                         <label>{{ __('admin.bio') }}</label>
                         <textarea name="bio" class="form-control">{{ old('bio', $user->bio) }}</textarea>
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label>{{ __('admin.drivers_license') }}</label>
-                        <input type="file" name="drivers_license" class="form-control">
-                        @if($user->drivers_license)
-                        <a href="{{ asset('storage/'.$user->drivers_license) }}" target="_blank">{{ __('admin.view_file') }}</a>
+                        <input type="file" name="license" class="form-control">
+                        @if($user->license)
+                         <img src="{{ $user->license }}" width="100" class="mt-2" />
                         @endif
                     </div>
 
@@ -69,15 +112,15 @@
                         <label>{{ __('admin.national_id_or_passport') }}</label>
                         <input type="file" name="national_id" class="form-control">
                         @if($user->national_id)
-                        <a href="{{ asset('storage/'.$user->national_id) }}" target="_blank">{{ __('admin.view_file') }}</a>
+                          <img src="{{ $user->national_id }}" width="100" class="mt-2" />
                         @endif
                     </div>
 
                     <div class="form-group">
                         <label>{{ __('admin.technical_inspection') }}</label>
-                        <input type="file" name="technical_inspection" class="form-control">
-                        @if($user->technical_inspection)
-                        <a href="{{ asset('storage/'.$user->technical_inspection) }}" target="_blank">{{ __('admin.view_file') }}</a>
+                        <input type="file" name="technical_inspection_certificate" class="form-control">
+                        @if($user->technical_inspection_certificate)
+                        <img src="{{ $user->technical_inspection_certificate }}" width="100" class="mt-2" />
                         @endif
                     </div>
 
@@ -85,7 +128,7 @@
                         <label>{{ __('admin.registration_certificate') }}</label>
                         <input type="file" name="registration_certificate" class="form-control">
                         @if($user->registration_certificate)
-                        <a href="{{ asset('storage/'.$user->registration_certificate) }}" target="_blank">{{ __('admin.view_file') }}</a>
+                       <img src="{{ $user->registration_certificate }}" width="100" class="mt-2" />
                         @endif
                     </div>
 
@@ -93,9 +136,9 @@
                         <label>{{ __('admin.insurance') }}</label>
                         <input type="file" name="insurance" class="form-control">
                         @if($user->insurance)
-                        <a href="{{ asset('storage/'.$user->insurance) }}" target="_blank">{{ __('admin.view_file') }}</a>
+                       <img src="{{ $user->insurance }}" width="100" class="mt-2" />
                         @endif
-                    </div>
+                    </div> -->
 
                     <button type="submit" class="btn btn-primary">{{ __('admin.update') }}</button>
                 </form>
@@ -114,20 +157,19 @@
                 first_name: {
                     required: true,
                     noSpace: true,
-                    minlength: 3
+                   
                 },
                 last_name: {
-                    required: true,
+                    required: false,
                     noSpace: true,
-                    minlength: 3
+                    
                 },
                 email: {
-                    required: true,
-                    email: true,
-                    noSpace: true
+                    
+                    email: true
+                   
                 },
                 phone_number: {
-                    required: true,
                     number: true,
                     minlength: 8,
                     maxlength: 15
@@ -143,7 +185,7 @@
                     minlength: "{{ __('validation.last_name_minlength') }}"
                 },
                 email: {
-                    required: "{{ __('validation.email_required') }}",
+                
                     email: "{{ __('validation.email_invalid') }}"
                 },
                 phone_number: {

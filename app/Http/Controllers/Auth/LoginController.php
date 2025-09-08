@@ -52,14 +52,14 @@ class LoginController extends Controller
                 return redirect()->route('admin.dashboard');
             }else{
                 return redirect()->route('adminlogin')->withErrors([
-                    'error' => 'The provided credentials do not match our records.',
+                    'error' => 'Invalid email or password.',
                 ]);
             }
         }
 
         // Authentication failed, return back with an error message
         return redirect()->route('adminlogin')->withErrors([
-            'error' => 'The provided credentials do not match our records.',
+            'error' => 'Invalid email or password.',
         ]);
     }
 

@@ -18,12 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
           'setLocal' => \App\Http\Middleware\SetLocale::class,
         ]);
 
-        // ✅ Aliases
         $middleware->alias([
+            'PreventBackHistory'          => \App\Http\Middleware\PreventBackHistory::class,
             'CustomSanctumMiddleware' => \App\Http\Middleware\CustomSanctumMiddleware::class,
         ]);
 
-        // ✅ If needed, stateful API setup
         $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -23,106 +23,228 @@ class AuthController extends Controller
 {
     use SendResponseTrait;
 
-    public function register(Request $request)
-    {
-        try {
-            $request->merge([
-                'email' => $request->email ?: null,
-                'phone' => $request->phone ?: null,
-            ]);
-    
-            $validator = Validator::make($request->all(), [
-                'email' => 'nullable|email|max:255|unique:users,email|required_without:phone',
-                'phone' => 'nullable|string|max:15|unique:users,phone|required_without:email',
-            ]);
-    
-            if ($validator->fails()) {
-                return $this->apiResponse('error', 422, $validator->errors()->first());
-            }
-    
-            $user = User::create([
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => Hash::make(Str::random(10)), 
-            ]);
-    
-            if ($user) {
-                Notifications::create([
-                    'user_id'   => $user->id,
-                    'type'      => 'user registration',
-                    'message'   => 'New User registered',
-                    'timestamp' => now(),
-                ]);
-    
-                if (!empty($user->email)) {
-                    Mail::to($user->email)->send(new WelcomeRegistration($user->first_name));
-                }
-    
-                do {
-                    $otp = rand(1000, 9999);
-                } while (OtpManagement::where('otp', $otp)->exists());
-    
-                OtpManagement::updateOrCreate(
-                    ['phone' => $user->phone],
-                    ['otp' => $otp, 'email' => $user->email]
-                );
-    
-                if (!empty($user->email)) {
-                    Mail::to($user->email)->send(new OtpMail($otp));
-                }
-    
-                // Example: SmsService::send($user->phone, "Your OTP is $otp");
-    
-                return $this->apiResponse('success', 200, 'OTP has been sent for verification', [
-                    'phone' => $user->phone,
-                    'email' => $user->email,
-                ]);
-            }
-    
-        } catch (\Exception $e) {
-            return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
+   public function register(Request $request)
+{
+    try {
+        $request->merge([
+            'email' => $request->email ?: null,
+            'phone_number' => $request->phone_number ?: null,
+            'country_code' => $request->country_code ?: null,
+            'country_short' => $request->country_short ?: null,
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'nullable|email|max:255|required_without:phone_number|unique:users,email',
+            'phone_number' => 'nullable|string|max:15|required_without:email|unique:users,phone_number',
+            'country_code' => 'nullable|required_with:phone_number',
+            'country_short' => 'nullable|required_with:phone_number',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->apiResponse('error', 422, $validator->errors()->first());
         }
+
+        // Create a user without email/phone (only password and blank profile)
+        $user = User::create([
+            'password' => Hash::make(Str::random(10)),
+
+            'phone_otp_expires_at' => now()->addMinutes(10),
+        ]);
+
+        // Generate unique OTP
+        do {
+            $otp = rand(1000, 9999);
+        } while (OtpManagement::where('otp', $otp)->exists());
+
+        // Save OTP and temporary contact info
+       OtpManagement::updateOrCreate(
+            array_filter([
+                'email'        => $request->email,
+                'phone_number' => $request->phone_number,
+                'country_code' => $request->phone_number ? $request->country_code : null,
+            ]),
+            [
+                'user_id'=>$user->user_id,
+                'otp' => $otp,
+            ]
+        );
+
+
+        // Send OTP via mail/sms
+        if (!empty($request->email)) {
+
+            Mail::to($request->email)->send(new OtpMail($otp));
+        }
+
+        // Example for SMS
+        // SmsService::send($request->phone_number, "Your OTP is $otp");
+
+        return $this->apiResponse('success', 200, 'OTP has been sent for verification', [
+            'user_id' => $user->user_id,
+            'email' => $request->email,
+            'otp' => $otp,
+            'phone_number' => $request->phone_number,
+            'country_code' => $request->country_code,
+            'country_short' => $request->country_short,
+        ]);
+
+    } catch (\Exception $e) {
+        return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
     }
-    
+}
+
     
 
-    public function resendOtp(Request $request)
+   public function resendOtp(Request $request)
     {
         try {
-            // Validate the incoming request
+            // Validate request
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email:rfc,dns|exists:users,email',
+                'email' => 'nullable|email|required_without:phone_number',
+                'phone_number' => 'nullable|string|required_without:email',
+                'country_code' => 'nullable|required_with:phone_number',
+                'user_id' => 'required',
+               
             ]);
 
             if ($validator->fails()) {
                 return $this->apiResponse('error', 422, $validator->errors()->first());
             }
 
-            // Find the user by email
-            $user = User::where('email', $request->email)->first();
+            // Fetch user by email or phone
+            $user = User::where('user_id',$request->user_id)->first();
 
-            // if ($user && $user->is_email_verified==1) {
-            //     return $this->apiResponse('error', 422, 'This email is already verified.');
-            // }
+            if (!$user) {
+                return $this->apiResponse('error', 404, 'User not found.');
+            }
 
-            // Generate a new OTP
+            // Generate unique OTP
             do {
                 $otp = rand(1000, 9999);
-            } while (OtpManagement::where('otp', $otp)->count());
+            } while (OtpManagement::where('otp', $otp)->exists());
 
-            // Save the new OTP to the database
-            OtpManagement::updateOrCreate(
-                ['email' => $user->email],
-                ['otp' => $otp]
+            // Save OTP
+             OtpManagement::updateOrCreate(
+                array_filter([
+                    'email'        => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'country_code' => $request->phone_number ? $request->country_code : null,
+                ]),
+                [
+                    'user_id'=>$user->user_id,
+                    'otp' => $otp,
+                ]
             );
+            // Send OTP
+            if (!empty($request->email)) {
+                Mail::to($request->email)->send(new OtpMail($otp));
+            }
 
-            Mail::to($user->email)->send(new OtpMail($otp));
+            if (!empty($request->phone_number)) {
+                // Replace with actual SMS logic
+                // SmsService::send($user->phone_number, "Your OTP is $otp");
+            }
 
-            return $this->apiResponse('success', 200, 'OTP has been resent to your email.', ['email' => $user->email]);
+            return $this->apiResponse('success', 200, 'OTP has been resent successfully.', [
+                'email' => $request->email,
+                'user_id' => $request->user_id,
+                'phone_number' => $request->phone_number,
+                'country_code' => $request->country_code,
+                'otp'          => $otp
+            ]);
+
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage());
         }
     }
+
+
+
+    public function updateContactAndSendOtp(Request $request)
+    {
+        try {
+            // Validate email or phone
+            $validator = Validator::make($request->all(), [
+                'email'        => 'nullable|required_without:phone_number',
+                'phone_number' => 'nullable|string|required_without:email',
+                'country_code' => 'nullable|required_with:phone_number',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->apiResponse('error', 422, $validator->errors()->first());
+            }
+
+            // Get current authenticated user
+            $user = auth()->user();
+            if (!$user) {
+                return $this->apiResponse('error', 401, 'Unauthorized');
+            }
+
+            // Update user details
+           if ($request->filled('email')) {
+                $exists = User::where('email', $request->email)
+                              ->where('user_id', '!=', auth()->id()) // exclude current user
+                              ->exists();
+
+                if ($exists) {
+                   return $this->apiResponse('error', 422, 'Email is Already in use');
+                }
+
+                //$user->email = $request->email;
+            }
+
+            if ($request->filled('phone_number')) {
+                $exists = User::where('phone_number', $request->phone_number)
+                              ->where('user_id', '!=', auth()->id())
+                              ->exists();
+
+                if ($exists) {
+                      return $this->apiResponse('error', 422, 'Phone number is Already in use');
+                }
+
+                //$user->phone_number = $request->phone_number;
+                //$user->country_code = $request->country_code;
+            }
+
+            //$user->save();
+
+
+
+            do {
+                $otp = rand(1000, 9999);
+            } while (OtpManagement::where('otp', $otp)->exists());
+
+           OtpManagement::updateOrCreate(
+                [
+                    'email' => $request->email,
+                    'phone_number' => $request->phone_number
+                ],
+                ['otp' => $otp,'country_code' => $request->country_code]
+            );
+
+
+            if ($request->filled('email')) {
+                Mail::to($request->email)->send(new OtpMail($otp));
+            }
+
+            if ($request->filled('phone_number')) {
+                // Example SMS Service call
+                // SmsService::send($user->country_code.$user->phone_number, "Your OTP is $otp");
+            }
+
+            return $this->apiResponse('success', 200, 'OTP has been sent successfully.', [
+                'email'        => $request->email,
+                'phone_number' => $request->phone_number,
+                'otp'          => $otp 
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->apiResponse('error', 500, $e->getMessage());
+        }
+    }
+
+
+
 
 
     /*end method register */
@@ -132,36 +254,148 @@ class AuthController extends Controller
      * createdDate  : 12-06-2024
      * purpose      : To verify the email via otp
     */
-    public function verifyOtp(Request $request){
-        try{
-            $validator = Validator::make($request->all(), [
-                'email'                 => 'required|exists:users,email',
-                'otp'                   => 'required',
-            ]);
-            if ($validator->fails()) {
-                return $this->apiResponse('error',422,$validator->errors()->first());
-            }
-            $otp = OtpManagement::where(function($query) use($request){
-                $query->where('email',$request->email)
-                        ->where('otp',$request->otp);
-            });
-            if($otp->clone()->count() == 0)
-                return $this->apiResponse('error',422,'OTP is invalid');
+    public function verifyOtp(Request $request)
+   {
+    try {
+        // Validate request - require either email or phone
+        $validator = Validator::make($request->all(), [
+            'email' => 'nullable|email|required_without:phone_number',
+            'phone_number' => 'nullable|string|required_without:email',
+            'country_code'        => 'nullable|required_with:phone_number',
+            'otp'   => 'required|numeric',
+            'user_id'   => 'required'
+        ]);
 
-            User::where('email',$request->email)->update([
-                'email_verified_at' => date('Y-m-d H:i:s')
-            ]);
-
-            OtpManagement::where(function($query) use($request){
-                $query->where('email',$request->email)
-                        ->where('otp',$request->otp);
-            })->delete();
-
-            return $this->apiResponse('success',200,'OTP has been verified successfully',$otp);
-        }catch(\Exception $e){
-            return $this->apiResponse('error',500,$e->getMessage());
+        if ($validator->fails()) {
+            return $this->apiResponse('error', 422, $validator->errors()->first());
         }
+
+        // Find the user
+        $user = User::where('user_id',$request->user_id)->first();
+
+        if (!$user) {
+            return $this->apiResponse('error', 404, 'User not found.');
+        }
+
+        // Check OTP existence
+      $otpExists = OtpManagement::where('user_id', $request->user_id)
+        ->where('otp', $request->otp)
+        ->first();
+        if (!$otpExists) {
+            return $this->apiResponse('error', 422, 'OTP is invalid');
+        }
+
+
+        // Update verification timestamp
+        if($request->phone_number){
+                 $user->update([
+                'phone_number'=>$request->phone_number,
+                'country_code'=>$request->country_code,
+                'country_short' => $request->country_short,
+                'phone_verfied_at' => now()
+            ]);
+        }
+
+         if($request->email){
+                 $user->update([
+                'email'=>$request->email,
+                'email_verified_at' => now()
+            ]);
+        }
+       
+       
+
+        // Delete OTP after successful verification
+        OtpManagement::where('user_id',$request->user_id)->where('otp', $request->otp)->delete();
+
+        // Generate API token
+        $accessToken = $user->createToken('AuthToken')->plainTextToken;
+
+        return $this->apiResponse('success', 200, 'OTP has been verified successfully', [
+            'token' => $accessToken,
+            'user'  => $user
+        ]);
+        
+    } catch (\Exception $e) {
+        return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
     }
+}
+
+
+   public function verifyOtpAfterLogin(Request $request)
+   {
+    try {
+        // Validate request - require either email or phone
+        $validator = Validator::make($request->all(), [
+            'email' => 'nullable|email|required_without:phone_number',
+            'phone_number' => 'nullable|string|required_without:email',
+            'country_code'        => 'nullable|required_with:phone_number',
+            'otp'   => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->apiResponse('error', 422, $validator->errors()->first());
+        }
+
+         $user = Auth::user();
+
+        if (!$user) {
+            return $this->apiResponse('error', 401, 'Unauthorized user.');
+        }
+
+        // Check OTP existence
+        $otpExists = OtpManagement::where(function($query) use ($request) {
+                $query->when($request->email, fn($q) => $q->where('email', $request->email))
+                      ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code));
+            })
+            ->where('otp', $request->otp)
+            ->exists();
+
+        if (!$otpExists) {
+            return $this->apiResponse('error', 422, 'OTP is invalid');
+        }
+
+        // Update verification timestamp
+        if($request->email){
+                 $user->update([
+                 'email'   =>$request->email,
+                'email_verified_at' => now()
+            ]);
+        }
+
+         if($request->phone_number){
+                 $user->update([
+                'phone_number'   =>$request->phone_number,
+                 'country_code'   =>$request->country_code,
+                'phone_verfied_at' => now()
+            ]);
+        }
+       
+       
+
+        // Delete OTP after successful verification
+        OtpManagement::where(function($query) use ($request) {
+                $query->when($request->email, fn($q) => $q->where('email', $request->email))
+                      ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code));
+            })
+            ->where('otp', $request->otp)
+            ->delete();
+
+        
+      
+
+        return $this->apiResponse('success', 200, 'OTP has been verified successfully', [
+           
+            'user'  => $user
+        ]);
+        
+    } catch (\Exception $e) {
+        return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
+    }
+    }
+
+ 
+
     /*end method verifyOtp */
     
     /**
@@ -172,26 +406,44 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            // Step 1: Validate input
             $validator = Validator::make($request->all(), [
-                'email' => 'nullable|email|exists:users,email',
-                'phone' => 'nullable|string|exists:users,phone',
+                'email'        => 'nullable|email|exists:users,email',
+                'phone_number' => 'nullable|string|exists:users,phone_number',
+                'country_code' => 'nullable|required_with:phone_number',
             ]);
-    
+
             $validator->after(function ($validator) use ($request) {
-                if (empty($request->email) && empty($request->phone)) {
+                // Require at least email or phone
+                if (!$request->filled('email') && !$request->filled('phone_number')) {
                     $validator->errors()->add('email', 'Either email or phone is required.');
-                    $validator->errors()->add('phone', 'Either email or phone is required.');
+                    $validator->errors()->add('phone_number', 'Either email or phone is required.');
+                }
+
+                // Check email verification
+                if ($request->filled('email')) {
+                    $user = User::where('email', $request->email)->first();
+                    if ($user && is_null($user->email_verified_at)) {
+                        $validator->errors()->add('email', 'Your email is not verified.');
+                    }
+                }
+
+                // Check phone verification
+                if ($request->filled('phone_number')) {
+                    $user = User::where('phone_number', $request->phone_number)->first();
+                    if ($user && is_null($user->phone_verfied_at)) {
+                        $validator->errors()->add('phone_number', 'Your phone number is not verified.');
+                    }
                 }
             });
-    
+
             if ($validator->fails()) {
                 return $this->apiResponse('error', 422, $validator->errors()->first());
             }
+
     
             // Step 2: Fetch user by email or phone
             $user = User::when($request->email, fn($q) => $q->where('email', $request->email))
-                        ->when($request->phone, fn($q) => $q->where('phone', $request->phone))
+                        ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code))
                         ->whereNull('deleted_at')
                         ->first();
     
@@ -210,8 +462,8 @@ class AuthController extends Controller
     
             // Step 4: Save OTP
             OtpManagement::updateOrCreate(
-                ['email' => $user->email, 'phone' => $user->phone],
-                ['otp' => $otp]
+                ['email' => $user->email, 'phone_number' => $user->phone_number],
+                ['otp' => $otp,'country_code' => $user->country_code]
             );
     
             // Step 5: Send OTP
@@ -223,13 +475,17 @@ class AuthController extends Controller
             if (!empty($request->phone)) {
                 // Replace with your SMS service
                 // SmsService::send($user->phone, "Your OTP is $otp");
-                $sentTo = 'phone';
+                $sentTo = 'phone_number';
             }
     
             return $this->apiResponse('success', 200, 'OTP has been sent for verification.', [
                 'email' => $user->email,
-                'phone' => $user->phone,
+                'phone_number' => $user->phone_number,
+                'user_id' => $user->user_id,
+                'country_code' => $user->country_code,
+                'is_profile_updated'=>$user->is_profile_updated,
                 'otp_sent_to' => $sentTo ?? null,
+                'otp' =>$otp
             ]);
     
         } catch (\Exception $e) {
@@ -523,22 +779,30 @@ class AuthController extends Controller
         }
     }
 
+   
+
     public function personalDetails(Request $request){
         try {
             $user_id = Auth::id();
 
+            // Validation
             $validate = Validator::make($request->all(), [
                 'first_name'    => 'required|string',
                 'last_name'     => 'required|string',
-                'dob'           => 'required',
+                'dob'           => 'required|date',
+                'email'         => [
+                    'nullable',
+                    'email',
+                    Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id'), // unique except current user
+                ],
                 'phone_number'  => [
-                'nullable',
-                'numeric',
-                'digits_between:8,12',
-                 Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id'),  // Ensure the phone number is unique except for the current user
-            ],
-
+                    'nullable',
+                    'numeric',
+                    'digits_between:8,12',
+                    Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id'), // unique except current user
+                ],
                 'country_code'  => 'nullable|string',
+                'profile_picture' => 'nullable|string',
             ]);
 
             if ($validate->fails()) {
@@ -548,24 +812,31 @@ class AuthController extends Controller
             // Fetch the current user data
             $user = User::where('user_id', $user_id)->first();
 
-            // Determine if the phone number has changed
-            $phoneNumberChanged = $request->phone_number !== $user->phone_number;
+            // Track changes
+            $phoneNumberChanged = $request->phone_number && $request->phone_number !== $user->phone_number;
+            $emailChanged       = $request->email && $request->email !== $user->email;
 
-            // Prepare the update data
+            // Prepare update data
             $updateData = [
-                'first_name'    => $request->first_name,
-                'last_name'     => $request->last_name,
-                'dob'           => $request->dob,
-                'country_code'  => $request->country_code,
-                'phone_number'  => $request->phone_number,
+                'first_name'       => $request->first_name,
+                'last_name'        => $request->last_name,
+                'dob'              => $request->dob,
+                'country_code'     => $request->country_code,
+                'phone_number'     => $request->phone_number,
+                'email'            => $request->email,
+                'profile_picture'  => $request->profile_picture,
+                'is_profile_updated' => 1,
             ];
 
-            // Update 'phone_verified_at' if phone number has changed
+            // Reset verification fields if values changed
             if ($phoneNumberChanged) {
                 $updateData['phone_verfied_at'] = null;
             }
+            if ($emailChanged) {
+                $updateData['email_verified_at'] = null;
+            }
 
-            // Perform the update
+            // Perform update
             User::where('user_id', $user_id)->update($updateData);
 
             // Fetch updated user data
@@ -578,62 +849,58 @@ class AuthController extends Controller
         }
     }
 
-    public function id_card(Request $request){
-        try{
-                $validate = Validator::make($request->all(), [
-                    'id_card'    => 'required',
-                ]);
-
-                if ($validate->fails()) {
-                    return $this->apiResponse('error',422,$validate->errors()->first());
-                }
-
-                if($request->hasFile('id_card'))
-                {
-                    $imageName='';
-                    $user_id=Auth::id();
-                    $userDetail = User::where('user_id', $user_id)->first();
-
-                    $ImgName = $userDetail ? $userDetail->id_card : '';
-
-                    /** delete old image from storage path */
-                    if ($ImgName) {
-                        $deleteImage = 'public/id_card/' . $ImgName;
-                        if (Storage::exists($deleteImage)) {
-                            Storage::delete($deleteImage);
-                        }
-                    }
-
-                    /* end of delete image */
-
-                    $imageName = time().'.'.$request->id_card->extension();  
-
-                    $request->id_card->storeAs('public/id_card', $imageName);
-
-                    User::where('user_id' , $user_id)->update([
-                        'id_card'  => $imageName,
-                        'verify_id' => 4
-                    ]);
-
-                    $notifications=[
-                        'user_id' => $user_id,
-                        'type'  => 'Document Approval Request',
-                        'message' => 'New document Verify Requested.',
-                        'timestamp' => now(),
-                     ];
-    
-                        Notifications::create($notifications);
-                }
+    public function uploadDocument(Request $request){
+    try {
+       $validate = Validator::make($request->all(), [
+            'document_type' => 'required|in:license_front,license_back,national_id_front,national_id_back,technical_inspection_certificate_front,technical_inspection_certificate_back,registration_certificate_front,registration_certificate_back,insurance_front,insurance_back',
+            'document'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
 
 
-
-                
-                return $this->apiResponse('success',200, 'Update Image successfully');
-
-        }catch(\Exception $e){
-            return $this->apiResponse('error',422, $e->getMessage());
+        if ($validate->fails()) {
+            return $this->apiResponse('error', 422, $validate->errors()->first());
         }
+
+        $user_id = Auth::id();
+        $user = User::where('user_id', $user_id)->first();
+
+        if (!$user) {
+            return $this->apiResponse('error', 404, 'User not found');
+        }
+
+        $documentType = $request->document_type; 
+        $oldFile = $user->$documentType ?? null;
+
+        // delete old file if exists
+        if ($oldFile && Storage::exists("public/$documentType/$oldFile")) {
+            Storage::delete("public/$documentType/$oldFile");
+        }
+
+        // save new file
+        $fileName = time() . '.' . $request->document->extension();
+        $path = $request->document->storeAs("public/$documentType", $fileName);
+
+          $storageUrl = Storage::url($path); 
+
+            $fileUrl = url($storageUrl); 
+            $user->update([
+                $documentType => $fileUrl,
+                'verify_id'   => 4
+            ]);
+
+            Notifications::create([
+                'user_id'   => $user_id,
+                'type'      => 'Document Approval Request',
+                'message'   => ucfirst(str_replace('_',' ', $documentType)) . ' uploaded and verification requested.',
+                'timestamp' => now(),
+            ]);
+
+        return $this->apiResponse('success', 200, ucfirst($documentType) . ' uploaded successfully', $user);
+
+    } catch (\Exception $e) {
+        return $this->apiResponse('error', 500, $e->getMessage());
     }
+}
 
     public function userDetails(Request $request){
         try{
@@ -649,7 +916,7 @@ class AuthController extends Controller
 
             if($userDetail->profile_picture != ""||$userDetail->profile_picture != null)
             {  
-                $userDetail->profile_picture=URL::to('/').'/storage/users/'.$userDetail->profile_picture;
+                $userDetail->profile_picture=$userDetail->profile_picture;
             }
             $userDetail->verify_id=$this->getStatusString($userDetail->verify_id);
 
@@ -670,7 +937,7 @@ class AuthController extends Controller
 
         // Attach ride count to the user details
         $userDetail->publish_ride_count = $rideCount;
-
+        $userDetail->profile_picture =  URL::to('/').'/storage/users/'.$userDetail->profile_picture;
         return $this->apiResponse('success',200, 'Fetched User Details successfully', $userDetail );
 
 
@@ -997,9 +1264,8 @@ class AuthController extends Controller
                 'required', 
                 'numeric', // Ensure it's a numeric value
                 'digits_between:8,12', // Optional: adjust if needed
-                       Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id') // Ensure the phone number is unique, ignoring the current user's ID
- // Ensure the phone number is unique for other users, excluding the current user
-            ], // Ensure phone number is unique in the 'users' table
+                       Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id') 
+            ], 
             'country_code' => 'required',
         ]);
 
@@ -1021,7 +1287,7 @@ class AuthController extends Controller
         $user->save();
 
         // Initialize Twilio Client using Account SID and Auth Token
-        $sid = env('TWILIO_ACCOUNT_SID');
+       /* $sid = env('TWILIO_ACCOUNT_SID');
         $token = env('TWILIO_AUTH_TOKEN');
         $twilioNumber = env('TWILIO_PHONE_NUMBER'); // Your Twilio phone number
 
@@ -1034,10 +1300,10 @@ class AuthController extends Controller
                 'from' => $twilioNumber,
                'body' => "Nexgo has sent you an OTP for verification. Your OTP is $otpCode. It is valid for the next 5 minutes. Please use it before it expires."
             ]
-        );
+        );*/
 
         return response()->json([
-            'data' =>   $user,
+            'data' =>   $otpCode,
             'status' => 'success',
             'message' => 'OTP sent via SMS successfully.'
         ], 201);

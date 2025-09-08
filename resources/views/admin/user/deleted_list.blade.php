@@ -96,6 +96,8 @@
 $(document).on('click', '.restoreUser', function(e) {
     e.preventDefault();
     const userId = $(this).data('id');
+   
+
 
     Swal.fire({
         title: '{{ __("admin.are_you_sure") }}',
@@ -110,7 +112,7 @@ $(document).on('click', '.restoreUser', function(e) {
         if (result.isConfirmed) {
             const csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: '/admin/user/restore/' + userId,
+                url:"{{ route('admin.user.restore', ['id' => '__id__']) }}".replace('__id__', userId),
                 type: 'POST',
                 data: {
                     _token: csrfToken

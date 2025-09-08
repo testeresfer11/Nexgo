@@ -19,13 +19,19 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('country_code', 10)->nullable();
+            $table->string('country_short', 10)->nullable();
             $table->string('phone_number', 15)->nullable();
             $table->string('profile_picture')->nullable();
-            $table->string('license')->nullable();
-            $table->string('national_id')->nullable();
-            $table->string('technical_inspection_certificate')->nullable();
-            $table->string('registration_certificate')->nullable();
-            $table->string('insurance')->nullable();
+            $table->string('license_front')->nullable();
+            $table->string('license_back')->nullable();
+            $table->string('national_id_front')->nullable();
+            $table->string('national_id_back')->nullable();
+            $table->string('technical_inspection_certificate_front')->nullable();
+            $table->string('technical_inspection_certificate_back')->nullable();
+            $table->string('registration_certificate_front')->nullable();
+            $table->string('registration_certificate_back')->nullable();
+            $table->string('insurance_front')->nullable();
+            $table->string('insurance_back')->nullable();
             $table->longText('bio')->nullable();
             $table->double('rating')->nullable();
             $table->integer('role_id')->default(1)->nullable()->comment('1-User, 2-Admin');
@@ -55,6 +61,8 @@ return new class extends Migration
             $table->boolean('is_notification_message')->default(false);
             $table->boolean('is_email_plan')->default(false);
             $table->boolean('is_email_message')->default(true);
+            $table->boolean('is_profile_updated')->default(false);
+
             $table->timestamps();
         });
 

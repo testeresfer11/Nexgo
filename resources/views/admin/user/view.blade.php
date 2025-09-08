@@ -76,7 +76,7 @@
                     <div class="text-center">
                         <img 
                             class="user-details-icon w-100 rounded"
-                            src="{{ $user->profile_picture ? url('storage/users/' . $user->profile_picture) : asset('admin/images/user-image.webp') }}"
+                            src="{{ $user->profile_picture ? $user->profile_picture : asset('admin/images/user-image.webp') }}"
                             alt="User profile picture">
                     </div>
                 </div>
@@ -156,26 +156,55 @@
 </form>
             </div>
         </div>
-          <div class="card mt-4">
-            <div class="card-body">
-                <h3 class="mb-4">{{ __('admin.document_files') }} : <span class="text-muted">{{ $user->verify_id }}</span></h3>
-                <div class="documents-section">
-                    @if($user->id_card)
-                        <h6 class="f-14 mb-1">
-                            <span class="semi-bold qury">{{ __('admin.document_id') }}:</span>
-                        </h6>
-                        <a href="{{ str_contains($user->id_card, 'https://dummyimage.com/') ? $user->id_card : url('/storage/id_card/'.$user->id_card) }}" target="_blank">
-                            <img class="img-lg" 
-                                 src="{{ str_contains($user->id_card, 'https://dummyimage.com/') ? $user->id_card : url('/storage/id_card/'.$user->id_card) }}" 
-                                 alt="{{ __('admin.user_id_card') }}" 
-                                 width="400" height="400">
-                        </a>
-                    @else
-                        <p class="text-muted">{{ __('admin.no_documents_added_yet') }}</p>
+         <div class="card mt-4">
+    <div class="card-body">
+        <h3 class="mb-4">
+            {{ __('admin.document_files') }} :
+            <span class="text-muted">{{ $user->verify_id }}</span>
+        </h3>
+
+        <div class="documents-section row">
+            @if($user->verify_id === 'Submitted')
+                @php
+                    $documents = [
+                        'License Front' => $user->license_front,
+                        'License Back' => $user->license_back,
+                        'National ID Front' => $user->national_id_front,
+                        'National ID Back' => $user->national_id_back,
+                        'Technical Inspection Certificate Front' => $user->technical_inspection_certificate_front,
+                        'Technical Inspection Certificate Back' => $user->technical_inspection_certificate_back,
+                        'Registration Certificate Front' => $user->registration_certificate_front,
+                        'Registration Certificate Back' => $user->registration_certificate_back,
+                        'Insurance Front' => $user->insurance_front,
+                        'Insurance Back' => $user->insurance_back
+                    ];
+                @endphp
+
+                @foreach($documents as $name => $doc)
+                    @if($doc)
+                        <div class="col-md-6 mb-4 text-center">
+                            <!-- Document Name -->
+                            <h5 class="mb-2">{{ $name }}</h5>
+
+                            <!-- Document Image -->
+                            <a href="{{ $doc }}" target="_blank">
+                                <img src="{{ $doc }}" 
+                                    class="mt-2 me-2 rounded shadow-sm border" 
+                                    width="300" 
+                                    height="auto"
+                                    style="cursor: pointer; max-width: 100%;" />
+                            </a>
+                        </div>
                     @endif
-                </div>
-            </div>
+                @endforeach
+            @else
+                <p class="text-muted">
+                    {{ __('admin.no_documents_added_yet') }}
+                </p>
+            @endif
         </div>
+    </div>
+</div>
 
 
         <div class="card mt-4">

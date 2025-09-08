@@ -15,10 +15,13 @@ use Carbon\Carbon;
 class ForgotPasswordController extends Controller
 {
     use SendResponseTrait;
+
     public function forgetPassword(Request $request)
     {
         try {
+
             if ($request->isMethod('get')) {
+
                 return view('admin.auth.forget-password');
             } else {
                 $validator = Validator::make($request->all(), [
@@ -29,10 +32,10 @@ class ForgotPasswordController extends Controller
                     ],
                 ]);
 
-                if ($validator->fails()) {
-                    return redirect()->back()->with('error', $validator->errors()->first());
+               if ($validator->fails()) {
+                    return redirect()->back()->withErrors($validator)->withInput();
                 }
-
+                                  
                 $user = User::where('email', $request->email)->first();
 
                 $this->sendOtp($request->email);
@@ -54,56 +57,62 @@ class ForgotPasswordController extends Controller
      * purpose      : Forgot password
      */
     public function verifyOtp(Request $request)
-    {
-        try {
-            if ($request->isMethod('get')) {
-                return view('admin.auth.verify-otp');
-            }
-
-            // POST method: handle OTP verification
-            $validator = Validator::make($request->all(), [
-                'email'                 => 'required|email:rfc,dns|exists:otp_management,email',
-                'otp'                   => 'required|exists:otp_management,otp',
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()->back()->withInput()->with('error', $validator->errors()->first());
-            }
-
-            $email = $request->email;
+{
+    try {
+        if ($request->isMethod('get')) {
+            $email = Session::get('otp_email');
             if (!$email) {
-                return redirect()->route('login')->with('error', 'Session expired. Please request a new code.');
+                return redirect()->route('user.forget-password')
+                    ->with('error', 'Session expired. Please try again.');
             }
-
-            $otp = OtpManagement::where('email', $request->email)
-                ->where('otp', $request->otp)
-                ->first();
-
-            if (!$otp) {
-                return redirect()->back()->with('error', 'Invalid email or OTP.');
-            }
-
-            $startTime = Carbon::parse($otp->updated_at);
-            $finishTime = Carbon::now();
-            $difference = $startTime->diffInMinutes($finishTime);
-
-            if ($difference > 60) {
-                return redirect()->back()->with('error', config('constants.ERROR.TOKEN_EXPIRED'));
-            }
-
-            $otp->delete();
-
-            $token = Str::random(64);
-            DB::table('password_reset_tokens')->updateOrInsert(
-                ['email' => $email],
-                ['token' => $token, 'created_at' => now()]
-            );
-
-            return redirect()->route('user.reset-password', ['token' => $token]);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return view('admin.auth.verify-otp', compact('email'));
         }
+
+        // POST: verify OTP
+        $validator = Validator::make($request->all(), [
+            'otp' => 'required|exists:otp_management,otp',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()
+                ->with('error', $validator->errors()->first());
+        }
+
+        $email = Session::get('otp_email');
+        if (!$email) {
+            return redirect()->route('login')
+                ->with('error', 'Session expired. Please request a new code.');
+        }
+
+        $otp = OtpManagement::where('email', $email)
+            ->where('otp', $request->otp)
+            ->first();
+
+        if (!$otp) {
+            return redirect()->back()->with('error', 'Invalid OTP.');
+        }
+
+        // check expiry
+        $startTime = Carbon::parse($otp->updated_at);
+        if ($startTime->diffInMinutes(now()) > 60) {
+            return redirect()->back()->with('error', config('constants.ERROR.TOKEN_EXPIRED'));
+        }
+
+        $otp->delete();
+
+        $token = Str::random(64);
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            ['token' => $token, 'created_at' => now()]
+        );
+
+        return redirect()->route('user.reset-password', ['token' => $token]);
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
+
 
     /**End method forgetPassword**/
 
@@ -112,28 +121,28 @@ class ForgotPasswordController extends Controller
      * createdDate  : 04-07-2024
      * purpose      : resend Otp to  mail
      */
-    public function resend(Request $request)
-    {
-        try {
-            $userEmail = Session::get('otp_email'); // Store this in session when requesting OTP originally
+public function resend(Request $request)
+{
+    try {
+        $email = Session::get('otp_email'); // ✅ correct session key
 
-            if (!$userEmail) {
-                return redirect()->route('login')->with('error', 'Session expired. Please start over.');
-            }
-
-            $otp = rand(100000, 999999); // Generate new OTP
-
-            // Store in session or DB as needed
-            Session::put('otp_code', $otp);
-
-            // You can use your existing mail system or Mailable class
-            $this->sendOtp($userEmail);
-
-            return back()->with('success', 'A new OTP has been sent to your email address.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong while resending OTP.');
+        if (!$email) {
+            return redirect()->route('user.forget-password')
+                ->with('error', 'Email not found. Please try again.');
         }
+
+        $this->sendOtp($email);
+
+        return redirect()->route('user.verify')
+            ->with('success', 'A new OTP has been sent to your email address.');
+    } catch (\Exception $e) {
+        return redirect()->route('user.verify')
+            ->with('error', 'Something went wrong while resending OTP.');
     }
+}
+
+
+
 
     /**End method resend**/
 

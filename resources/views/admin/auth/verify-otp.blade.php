@@ -42,6 +42,15 @@
               <img src="{{asset('images/new-logo.png')}}" class="img-fluid logo">
             </div>
           </div>
+             @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
           <div class=" col-lg-6 bg-white px-5 py-5">
           <x-language-switcher />
@@ -49,33 +58,49 @@
             <div class="card-body login-form px-5 py-5">
               <div class="text-center">
                 <img src="{{asset('admin/images/auth/new_logo.png')}}" class="img-fluid" alt="">
-                <h1 class="heading-primary my-3">{{ __('auth.reset_password') }}</h1>
+                <h1 class="heading-primary my-3"></h1>
                <p class="grey">{{ __('auth.reset_password_description') }}</p>
 
               </div>
-
-              <form method="POST" action="{{ route('user.verify') }}">
-                @csrf
-                <div class="form-group">
+                            <form method="POST" action="{{ route('user.verify') }}">
+                  @csrf
                   <input type="hidden" name="email" value="{{ $email }}">
+                  
+                  <label for="otp">Enter OTP</label>
+                  <input type="number" name="otp" id="otp" class="form-control" required>
 
-                 <label for="otp">{{ __('auth.enter_code') }}</label>
+                  <div class="mt-2 text-center">
+                      <small>
+                          Didn’t get code? 
+                          <a href="{{ route('user.resend') }}" id="resendLink" style="pointer-events: none; color: grey;">
+                              Resend OTP (<span id="timer">30</span>s)
+                          </a>
+                      </small>
+                  </div>
 
-                  <input type="text" name="otp" id="otp" class="form-control" required maxlength="6">
-                </div>
-
-                <div class="mt-2 text-center">
-                  <small>
-                    {{ __('auth.didnt_receive_code') }}
-                    <a href="{{ route('user.resend') }}" class="text-danger">{{ __('auth.resend') }}</a>
-                  </small>
-                </div>
-                <div class="text-center">
-                 <button type="submit" class="btn btn-primary w-100 mt-3">{{ __('auth.continue') }}</button>
-
-                </div>
-
+                  <button type="submit" class="btn btn-primary mt-3">Verify</button>
               </form>
+
+              {{-- Timer Script --}}
+              <script>
+                  let countdown = 30;
+                  let timerDisplay = document.getElementById("timer");
+                  let resendLink = document.getElementById("resendLink");
+
+                  let interval = setInterval(function () {
+                      countdown--;
+                      timerDisplay.textContent = countdown;
+
+                      if (countdown <= 0) {
+                          clearInterval(interval);
+                          resendLink.style.pointerEvents = "auto";   // Enable link
+                          resendLink.style.color = "#007bff";        // Bootstrap primary color
+                          timerDisplay.textContent = "";
+                      }
+                  }, 1000);
+              </script>
+
+
 
             </div>
           </div>

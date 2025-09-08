@@ -47,6 +47,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('register','register');
     Route::post('verify-otp','verifyOtp');
     Route::post('resend-otp','resendOtp');
+    
 
     Route::post('login','login');
     Route::post('forget-password','forgetPassword')->name('forget-password');
@@ -116,7 +117,7 @@ Route::middleware(['CustomSanctumMiddleware'])->group(function () {
         Route::post('edit_picture','edit_picture');
         Route::post('bio','bio');
         Route::post('personal-details','personalDetails');
-        Route::post('verify-id','id_card');
+        Route::post('upload-document','uploadDocument');
         Route::get('get-user-details','userDetails');
          Route::get('get-passanger-details','passangerDetails');
         Route::post('user-preferences','userPreferences');
@@ -127,6 +128,10 @@ Route::middleware(['CustomSanctumMiddleware'])->group(function () {
         Route::post('phone-verify','verifyPhoneOtp');
         Route::post('resetpassword','resetpassword');
         Route::put('notification-settings', 'updateNotificationSettings');
+        Route::post('resend-otp-after-login','updateContactAndSendOtp');
+         Route::post('verify-otp-after-login','verifyOtpAfterLogin');
+
+        
 
         Route::post('delete-account','deleteAccount');
 

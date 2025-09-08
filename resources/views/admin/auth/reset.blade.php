@@ -22,7 +22,7 @@
                 @csrf
                 <input type="hidden" value="{{$token}}" name="token"> 
                 <div class="form-group">
-                    <label class="title-label">Password *</label>
+                    <label class="title-label">Passwordvxcvxcv *</label>
                     <input type="password" id="password" name="password" class="form-control p_input @error('password') is-invalid @enderror">
                     <span class="mdi mdi-eye-off-outline eye-icon absolute" id="togglePassword"></span>
                     @error('password')
@@ -60,37 +60,45 @@
 
 
 <script>
-$(document).ready(function () {
-    // Custom validation method for strong passwords
-    jQuery.validator.addMethod("strongPassword", function(value, element) {
-        return this.optional(element) || 
-               /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
-    }, "Password must have at least 8 characters, including one uppercase, one lowercase, one number, and one special character.");
-
-    $("#admin_reset_password").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 8,
-                strongPassword: true
-            },
-            password_confirmation: {
-                required: true,
-                equalTo: "#password" // Ensures it matches password
-            }
+$("#admin_reset_password").validate({
+    rules: {
+        password: {
+            required: true,
+            minlength: 8,
+            strongPassword: true
         },
-        messages: {
-            password: {
-                required: "Password is required.",
-                minlength: "Password must be at least 8 characters long."
-            },
-            password_confirmation: {
-                required: "Password confirmation is required.",
-                equalTo: "Passwords do not match."
-            }
+        password_confirmation: {
+            required: true,
+            equalTo: "#password"
         }
-    });
+    },
+    messages: {
+        password: {
+            required: "Password is required.",
+            minlength: "Password must be at least 8 characters long."
+        },
+        password_confirmation: {
+            required: "Password confirmation is required.",
+            equalTo: "Passwords do not match."
+        }
+    },
+    errorElement: 'div', // Use div for error message
+    errorClass: 'invalid-feedback', // Bootstrap style
+    highlight: function (element) {
+        $(element).addClass('is-invalid'); // highlight input
+    },
+    unhighlight: function (element) {
+        $(element).removeClass('is-invalid'); // remove highlight
+    },
+    errorPlacement: function (error, element) {
+        if (element.parent('.input-group').length) {
+            error.insertAfter(element.parent()); // for input-groups
+        } else {
+            error.insertAfter(element); // default
+        }
+    }
 });
+
 </script>
 
 <script>

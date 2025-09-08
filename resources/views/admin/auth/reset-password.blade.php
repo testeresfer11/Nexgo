@@ -15,6 +15,8 @@
 
   <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-C4uY2V0+ZnD6eGgXvD0Qdddo4nJ6Z6O6G8lF8qgqk2oTlmV3m21gXc2vC5jZx3w5JKjDfhcGQ0An4L6Yx0Hw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 
   <style>
     label.error {
@@ -45,7 +47,15 @@
 
           <div class=" col-lg-6 bg-white px-5 py-5">
           <x-language-switcher />
-
+           @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
             <div class="card-body login-form px-5 py-5">
               <div class="text-center">
                 <img src="{{asset('admin/images/auth/new_logo.png')}}" class="img-fluid" alt="">
@@ -54,72 +64,132 @@
               </div>
               {{-- <x-alert /> --}}
               <form action="{{ route('user.reset-password',['token' => $token]) }}" method="POST" id="loginForm">
-                @csrf
-                <div class="form-group mb-1">
-                  <label for="password">{{ __('auth.passwords') }} *</label>
-                  <div class="form-input">
-                    <input name="password" id="password" type="password" class="form-control  @error('password') is-invalid @enderror" autocomplete="current-password">
-                    <span class="togglePassword eye-icon" data-toggle="password">
-                      <i class="fa fa-eye-slash"></i>
-                    </span>
+                    @csrf
+                  <div class="form-group position-relative mb-3">
+                      <label for="password">{{ __('admin.password') }}</label>
+                      <input id="password" type="password" 
+                             class="form-control" 
+                             name="password" required>
+
+                      <!-- Eye Icon -->
+                      <span class="togglePassword eye-icon position-absolute" 
+                            data-target="password" 
+                            title="Show Password"
+                            style="top: 48px; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                          <i class="fa-solid fa-eye-slash"></i>
+                      </span>
                   </div>
-                  @error('password')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
-                </div>
 
-                <div class="form-group mt-1 pt-2">
-                  <label for="password-confirm">{{ __('auth.confirm_password') }}</label>
-                  <div class="form-input">
-                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                    <span class="togglePassword eye-icon" data-toggle="password-confirm">
-                      <i class="fa fa-eye-slash"></i>
-                    </span>
+                  <div class="form-group position-relative mb-3">
+                      <label for="password-confirm">{{ __('admin.confirm_password') }}</label>
+                      <input id="password-confirm" type="password" 
+                             class="form-control" 
+                             name="password_confirmation" required>
+
+                      <!-- Eye Icon -->
+                      <span class="togglePassword eye-icon position-absolute" 
+                            data-target="password-confirm" 
+                            title="Show Password"
+                            style="top: 48px; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                          <i class="fa-solid fa-eye-slash"></i>
+                      </span>
                   </div>
-                  @error('password_confirmation')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
-                </div>
 
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary btn-block enter-btn">{{ __('auth.reset_password') }}</button>
-                </div>
+                          @error('password_confirmation')
+                          <span class="invalid-feedback" role="alert">
+                              <strong>{{ $message }}</strong>
+                          </span>
+                          @enderror
+                      </div>
 
-              </form>
+                      
+
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block enter-btn">
+                            {{ __('auth.reset_password') }}
+                        </button>
+                    </div>
+                </form>
+
+
+
             </div>
           </div>
+
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+
+        <script>
+          document.querySelectorAll('.togglePassword').forEach(function (eye) {
+              eye.addEventListener('click', function () {
+                  let target = document.getElementById(this.getAttribute('data-target'));
+                  let icon = this.querySelector('i');
+
+                  if (target.type === "password") {
+                      target.type = "text";
+                      icon.classList.replace("fa-eye-slash", "fa-eye");
+                      this.setAttribute("title", "Hide Password");
+                  } else {
+                      target.type = "password";
+                      icon.classList.replace("fa-eye", "fa-eye-slash");
+                      this.setAttribute("title", "Show Password");
+                  }
+              });
+          });
+      </script>
           <script>
-            $('#loginForm').validate({
-              rules: {
-                password: {
-                  required: true,
-                  noSpace: true,
-                  minlength: 8,
-                },
-                password_confirmation: {
-                  required: true,
-                  noSpace: true,
-                  minlength: 8,
-                  equalTo: "#password",
-                },
-              },
-              messages: {
-                password: {
-                  required: '{{ __("auth.password_required") }}',
-                  minlength: '{{ __("auth.password_minlength") }}',
-                },
-                password_confirmation: {
-                  required: '{{ __("auth.confirm_password_required") }}',
-                  minlength: '{{ __("auth.confirm_password_minlength") }}',
-                  equalTo: '{{ __("auth.passwords_must_match") }}'
-                },
-              },
-              submitHandler: function(form) {
-                form.submit();
-              }
-            });
+           $(document).ready(function () {
+
+    // ✅ Define strong password validation rule
+    jQuery.validator.addMethod("strongPassword", function(value, element) {
+        return this.optional(element) || 
+               /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+    }, "Password must include uppercase, lowercase, number, and special character.");
+
+    // ✅ Now initialize validation
+    $("#loginForm").validate({
+        rules: {
+            password: {
+                required: true,
+                minlength: 8,
+                strongPassword: true
+            },
+            password_confirmation: {
+                required: true,
+                equalTo: "#password"
+            }
+        },
+        messages: {
+            password: {
+                required: "Password is required.",
+                minlength: "Password must be at least 8 characters long."
+            },
+            password_confirmation: {
+                required: "Password confirmation is required.",
+                equalTo: "Passwords do not match."
+            }
+        },
+        errorElement: 'div',
+        errorClass: 'invalid-feedback',
+        highlight: function (element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid');
+        },
+        errorPlacement: function (error, element) {
+            if (element.parent('.input-group').length) {
+                error.insertAfter(element.parent());
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
+
+});
           </script>

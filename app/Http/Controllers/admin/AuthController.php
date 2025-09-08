@@ -161,13 +161,13 @@ class AuthController extends Controller
      * createdDate  : 30-05-2024
      * purpose      : LogOut the logged in user
     */
-    public function logout(Request $request){
-        try{
-            Auth::logout();
-            return redirect()->route('login');
-        }catch(\Exception $e){
-            return redirect()->back()->with("error", $e->getMessage());
-        }
-    }
+    public function logout(Request $request)
+{
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+}
     /**End method logout**/
 }

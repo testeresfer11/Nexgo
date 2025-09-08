@@ -95,26 +95,49 @@
                             </div>
                         </div>
                         <div class="form-group px-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label>{{ __('admin.profile_upload') }}
-                                    </label>
-                                    <div class="input-group col-xs-12">
-                                        <input type="file" name="profile_picture" class="form-control file-upload-info" placeholder="Upload Image" accept="image/*" value="{{ old('profile_picture', $user->profile_picture) }}">
+    <div class="row">
+        <div class="col-md-6">
+            <label>{{ __('admin.profile_upload') }}</label>
+            <div class="input-group col-xs-12">
+                <input type="file" 
+                       name="profile_picture" 
+                       class="form-control file-upload-info" 
+                       placeholder="Upload Image" 
+                       accept="image/*"
+                       onchange="previewProfile(this)">
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
-                        </div>
-                        @if($user->profile_picture != "")
-                        <div class="form-group px-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <image src="{{url('')}}/storage/users/{{$user->profile_picture}}" width="200" hieght="200">
+
+                            {{-- Preview selected image --}}
+                            <div class="form-group px-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img id="profilePreview" 
+                                             src="{{ $user->profile_picture ? url('storage/users/'.$user->profile_picture) : '' }}" 
+                                             width="200" 
+                                             height="200" 
+                                             style="display: {{ $user->profile_picture ? 'block' : 'none' }}; object-fit: cover; border-radius: 10px;">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @endif
+
+                            {{-- JS for live preview --}}
+                            <script>
+                                function previewProfile(input) {
+                                    if (input.files && input.files[0]) {
+                                        let reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            let preview = document.getElementById('profilePreview');
+                                            preview.src = e.target.result;
+                                            preview.style.display = "block";
+                                        };
+                                        reader.readAsDataURL(input.files[0]);
+                                    }
+                                }
+                            </script>
+
                         <div class="form-group px-3">
                             <div class="row">
                                 <div class="col-md-12">
@@ -214,7 +237,6 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        console.log(response);
                         // Handle success
                         if (response.status == "success") {
                             toastr.success(response.message);
@@ -238,7 +260,7 @@
 
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
-            initialCountry: 'au', // Default country
+            initialCountry: 'cmr', // Default country
             separateDialCode: true,
             utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js', // Path to utils.js    
         });

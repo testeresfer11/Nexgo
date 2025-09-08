@@ -17,9 +17,8 @@ class DocumentController extends Controller
         try{
 
         $documents = User::where('role_id', '!=', 2)
-            ->whereIn('verify_id', ['1','4'])
-            ->whereNotNull('id_card')
-            ->latest() // Order by the id column in descending order
+            ->whereIn('verify_id', [4])
+            ->latest() 
             ->get();
 
            
@@ -98,62 +97,103 @@ class DocumentController extends Controller
      * createdDate  : 31-05-2024
      * purpose      : Update the user status
     */
-  public function changeStatus(Request $request){
-    try{
+ public function changeStatus(Request $request)
+{
+    try {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'id'        => 'required',
-            'status'    => 'required|in:1,2',  // Only allow status 1 (rejected) or 2 (approved)
+            'id'     => 'required|exists:users,user_id',
+            'status' => 'required', // Only allow 1 (Rejected) or 2 (Approved)
         ]);
 
         if ($validator->fails()) {
-            if($request->ajax()){
-                return response()->json(["status" => "error", "message" => $validator->errors()->first()], 422);
-            }
+            return response()->json([
+                "status"  => "error",
+                "message" => $validator->errors()->first()
+            ], 422);
         }
 
-        // Update the user verify status
-        $user = User::where('user_id', $request->id)->first();
-        $user->update(['verify_id' => $request->status]);
+        // Fetch user
+        $user = User::where('user_id', $request->id)->firstOrFail();
+        $user->verify_id = $request->status;
 
-        $fcm_token = $user->fcm_token;
-        $device_type = $user->device_type;
-
-        // Determine notification details based on status
+        // Notification data
         if ($request->status == 2) {
-            // Status 2 means "Approved"
+            // Approved
             $notificationData = [
                 'title' => 'Document approved',
-                'body' => 'Your document has been approved by the admin.',
-                'type' => 'document_approved',
-                'ride_id' => null, // Adjust this if needed
+                'body'  => 'Your document has been approved by the admin.',
+                'type'  => 'document_approved',
+                'ride_id' => null,
             ];
         } else {
-            // Status other than 2 means "Rejected"
+            // Rejected
             $notificationData = [
                 'title' => 'Document rejected',
-                'body' => 'Your document has been rejected by the admin.',
-                'type' => 'document_rejected',
-                'ride_id' => null, // Adjust this if needed
+                'body'  => 'Your document has been rejected by the admin.',
+                'type'  => 'document_rejected',
+                'ride_id' => null,
             ];
-        }
 
-        // Send push notification if FCM token exists
-        if ($fcm_token) {
-            if ($device_type === 'ios') {
-                $this->sendPushNotificationios($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
-            } else {
-                $this->sendPushNotification($fcm_token, $notificationData['title'], $notificationData['body'], $notificationData['type'], $notificationData['ride_id']);
+            // Document fields
+            $documentFields = [
+                'license_front',
+                'license_back',
+                'national_id_front',
+                'national_id_back',
+                'technical_inspection_certificate_front',
+                'technical_inspection_certificate_back',
+                'registration_certificate_front',
+                'registration_certificate_back',
+                'insurance_front',
+                'insurance_back',
+            ];
+
+            // Delete files & nullify DB columns
+            foreach ($documentFields as $field) {
+                if ($user->$field) {
+                    \Storage::disk('public')->delete($user->$field); // use correct disk
+                    $user->$field = null;
+                }
             }
         }
 
-        // Return a success response
-        $message = $request->status == 2 ? "User document approved" : "User document rejected";
-        return response()->json(["status" => "success", "message" => $message], 200);
+        $user->save();
 
-    } catch(\Exception $e) {
-        // Return an error response
-        return response()->json(["status" => "error", "message" => $e->getMessage()], 500);
+        // Send push notification
+        if ($user->fcm_token) {
+            if ($user->device_type === 'ios') {
+                $this->sendPushNotificationios(
+                    $user->fcm_token,
+                    $notificationData['title'],
+                    $notificationData['body'],
+                    $notificationData['type'],
+                    $notificationData['ride_id']
+                );
+            } else {
+                $this->sendPushNotification(
+                    $user->fcm_token,
+                    $notificationData['title'],
+                    $notificationData['body'],
+                    $notificationData['type'],
+                    $notificationData['ride_id']
+                );
+            }
+        }
+
+        // Response
+        return response()->json([
+            "status"  => "success",
+            "message" => $request->status == 2
+                ? "User document approved"
+                : "User document rejected and removed"
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            "status"  => "error",
+            "message" => $e->getMessage()
+        ], 500);
     }
 }
 

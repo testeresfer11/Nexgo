@@ -175,6 +175,10 @@ return [
     'phone_number_digits' => 'Phone number must be between 8 and 15 digits.',
     'profile_picture_image' => 'Profile picture must be an image.',
     'profile_picture_max' => 'Profile picture must be less than 2MB.',
+    'equalTo'=> "Passwords do not match",
+    'phone_numeric'=> "Phone number must be numeric",
+    'confirm_password_required'=>"Confirm password required",
+    'password_required' => 'Password is requird',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

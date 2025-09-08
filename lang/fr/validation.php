@@ -182,6 +182,14 @@ return [
         'phone_number_digits' => 'Phone number must be between 8 and 15 digits.',
         'profile_picture_image' => 'Profile picture must be an image.',
         'profile_picture_max' => 'Profile picture must be less than 2MB.',
+        
+        'equalTo'=> "Les mots de passe ne correspondent pas",
+        'phone_numeric'=> "Le numero de téléphone doit être numerique",
+        'confirm_password_required' => "La confirmation du mot de passe est requise",
+        'password_required' => "Le mot de passe est requis",
+
+
+
 
 
     /*

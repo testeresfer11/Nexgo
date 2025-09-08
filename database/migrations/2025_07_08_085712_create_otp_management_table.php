@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('otp_management', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('email');
+            $table->string('phone_number');
+            $table->string('country_code');
             $table->integer('otp');
             $table->timestamps();
         });

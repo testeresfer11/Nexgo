@@ -23,7 +23,7 @@ class CarController extends Controller
             
             if($cars)
             {
-                return $this->apiResponse('success', 200, 'Driver details fetched successully', $cars);
+                return $this->apiResponse('success', 200, 'Vehicle details fetched successfully', $cars);
             }
             else
             {
@@ -70,7 +70,7 @@ class CarController extends Controller
                 'color' => $request->color
             ]);
 
-            return $this->apiResponse('success', 200, 'Driver details added successully');
+            return $this->apiResponse('success', 200, 'Vehicle details added successfully');
 
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());
@@ -110,7 +110,7 @@ class CarController extends Controller
                 'color' => $request->color
             ]);
 
-            return $this->apiResponse('success', 200, 'Updated details successully');
+            return $this->apiResponse('success', 200, 'Updated details successfully');
 
         } catch (\Exception $e) {
             return $this->apiResponse('error', 500, $e->getMessage(), $e->getLine());

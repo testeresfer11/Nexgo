@@ -38,7 +38,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="phone_number">{{ __('admin.phone') }}</label>
+                            <label for="phone_number">{{ __('admin.phone_number') }}</label>
                             <input type="text" class="form-control @error('phone_number') is-invalid @enderror" id="phone_number" name="phone_number" value="{{ old('phone_number', $general->phone_number ?? '') }}">
                             @error('phone_number')
                                 <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -164,7 +164,7 @@
         const input = document.querySelector("#phone_number");
         if (input) {
             const iti = window.intlTelInput(input, {
-                initialCountry: 'au',
+                initialCountry: 'cm',
                 separateDialCode: true,
                 utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
             });

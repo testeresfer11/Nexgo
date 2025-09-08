@@ -113,7 +113,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/vehicle/delete/" + user_id,
+                    url: "{{ route('admin.vehicle.delete', ['id' => '__id__']) }}".replace('__id__', user_id),
                     type: "GET",
                     success: function (response) {
                         if (response.status == "success") {

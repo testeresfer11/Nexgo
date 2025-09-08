@@ -45,7 +45,7 @@
                             <tr>
                                 <th>{{ __('admin.sr_no') }}</th>
                                 <th>{{ __('admin.name') }}</th>
-                                <th>{{ __('admin.document') }}</th>
+                              
                                 <th>{{ __('admin.status') }}</th>
                                 <th>{{ __('admin.verify') }}</th>
                                 <th>{{ __('admin.action') }}</th>
@@ -56,22 +56,36 @@
                             <tr>
                                 <td class="py-1">{{ $keys + 1 }}</td>
                                 <td>{{ $document->first_name ?? "-" }}</td>
-                                <td>
-                                    @if($document->id_card != "" && str_contains($document->id_card, 'https://dummyimage.com/'))
-                                    <a href="{{ $document->id_card }}" target="_blank">
-                                        <img class="img-lg" src="{{ $document->id_card }}" alt="{{ __('admin.user_id_card') }}" width="500" height="500">
-                                    </a>
-                                    @else
-                                    <a href="{{ url('/') }}/storage/id_card/{{ $document->id_card }}" target="_blank">
-                                        <img class="img-lg" src="{{ url('/') }}/storage/id_card/{{ $document->id_card }}" alt="{{ __('admin.user_id_card') }}" width="400" height="400">
-                                    </a>
-                                    @endif
-                                </td>
+                                
                                 <td>{{ $document->verify_id }}</td>
-                                <td>
-                                    <button type="submit" class="btn green-btn btn-md switch" data-id="{{ $document->user_id }}" data-value="2">{{ __('admin.approve') }}</button>
-                                    <button type="submit" class="btn red-btn btn-md switch" data-id="{{ $document->user_id }}" data-value="3">{{ __('admin.decline') }}</button>
-                                </td>
+                               @if(
+                            $document->license_front &&
+                            $document->license_back &&
+                            $document->national_id_front &&
+                            $document->national_id_back &&
+                            $document->technical_inspection_certificate_front &&
+                            $document->technical_inspection_certificate_back &&
+                            $document->registration_certificate_front &&
+                            $document->registration_certificate_back &&
+                            $document->insurance_front &&
+                            $document->insurance_back
+                        )
+                            <td>
+                                <button type="submit" class="btn green-btn btn-md switch"
+                                        data-id="{{ $document->user_id }}" data-value="2">
+                                    {{ __('admin.approve') }}
+                                </button>
+                                <button type="submit" class="btn red-btn btn-md switch"
+                                        data-id="{{ $document->user_id }}" data-value="3">
+                                    {{ __('admin.decline') }}
+                                </button>
+                            </td>
+                        @else
+                            <td>
+                                <span class="text-danger">All documents are not submitted yet</span>
+                            </td>
+                        @endif
+
                                 <td>
                                     <a href="{{ route('admin.user.view', ['id' => $document->user_id]) }}" title="{{ __('admin.view') }}" class="text-primary">
                                         <i class="mdi mdi-eye"></i>
@@ -140,7 +154,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/document/changeStatus",
+                    url: "{{ route('admin.document.changeStatus') }}",
                     type: "GET",
                     data: { id: id, status: status },
                     success: function (response) {

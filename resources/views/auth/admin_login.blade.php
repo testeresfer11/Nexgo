@@ -23,7 +23,7 @@
     }
     </style>
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{asset('images/carpool_logo.png')}}" />
+    <link rel="shortcut icon" href="#" />
 </head>
 <body>
     <div class="container-scroller">

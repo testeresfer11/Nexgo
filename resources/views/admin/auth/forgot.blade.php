@@ -16,6 +16,15 @@
               <div class="text-center">
                 <img src="{{asset('images/logo.png')}}" alt="" class="img-fluid logo">
             </div>
+             @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
             <h3 class=" text-center mb-3">Forgot Password</h3>
             <p class="card-sub-title text-center">Enter your email account to reset Password </p>
             <form action="{{route('admin-forgot-password')}}" method="post" id="admin_forgot_password" class="px-3 ">

@@ -100,7 +100,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="no-record"><center>{{ __('payment.no_record_found') }}</center></td>
+                                <td colspan="8" class="no-record"><center>{{ __('admin.no_record_found') }}</center></td>
                             </tr>
                             @endforelse
                         </tbody>

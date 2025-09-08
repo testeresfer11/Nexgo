@@ -27,9 +27,9 @@ return [
         "ADMIN"     => "admin",
         "USER"      => "user",
     ],
-    "APP_NAME"          => "CARPOOL",
+    "APP_NAME"          => "NEXGO",
 
-    "COMPANYNAME"       => env('APP_NAME','CARPOOL'),
+    "COMPANYNAME"       => env('APP_NAME','NEXGO'),
     "encryptionMethod"  => env('ENC_DEC_METHOD',''),
     "secrect"           => env('ENC_DEC_SECRET',''),
     "STRIPE_KEY"        => env('STRIPE_KEY',''),

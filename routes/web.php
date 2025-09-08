@@ -64,7 +64,7 @@ Route::post('webhook/stripe', [PaymentController::class, 'handleWebhook'])->name
  Route::get('/stripe/token', [PaymentController::class, 'index'])->name('stripe.token');
     Route::post('/stripe/token', [PaymentController::class, 'store'])->name('stripe.store');
 
-
+Route::middleware('PreventBackHistory')->group(function () {
 Route::group(['prefix' =>'admin'],function () {
     Route::middleware(['auth'])->name('admin.')->group(function () {
         Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
@@ -91,7 +91,7 @@ Route::group(['prefix' =>'admin'],function () {
                     Route::get('notifications','notifications')->name('notifications');
                     Route::get('notification-view/{notify}/{id}','notificationsView')->name('notification-view');
                     Route::get('deleted', 'deletedUser')->name('deleted'); // Deleted Users
-                    Route::post('restore/{id}', 'restore');
+                    Route::post('restore/{id}', 'restore')->name('restore');
 
 
                 });
@@ -265,5 +265,6 @@ Route::group(['prefix' =>'admin'],function () {
                 });
             });
     });
+});
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

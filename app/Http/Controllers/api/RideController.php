@@ -36,33 +36,7 @@ class RideController extends Controller
     use SendResponseTrait;
     protected $provider;
 
-    public function __construct()
-    {
-        $this->provider = new PayPalClient;
 
-        $config = [
-            'mode' => env('PAYPAL_MODE'), // 'sandbox' or 'live'
-            env('PAYPAL_MODE') => [
-                'client_id' => env('PAYPAL_SANDBOX_CLIENT_ID'),
-                'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
-                'app_id' => env('PAYPAL_APP_ID', 'APP-80W284485P519543T'),
-            ],
-            'payment_action' => 'Sale',        // Action type
-            'currency' => 'AUD',         // Currency
-            'locale' => 'en_US',       // Locale
-            'notify_url' => env('PAYPAL_NOTIFY_URL', 'https://your-app.com/paypal/notify'),
-            'validate_ssl' => env('PAYPAL_VALIDATE_SSL', true), // SSL validation
-        ];
-
-        try {
-            // Set API credentials and obtain access token
-            $this->provider->setApiCredentials($config);
-            $this->provider->getAccessToken(); // This should be handled to ensure token is valid
-        } catch (\Exception $e) {
-            // Handle initialization errors
-            throw new \Exception('PayPal Client initialization failed: ' . $e->getMessage());
-        }
-    }
 
     public function getAllRides(Request $request)
     {

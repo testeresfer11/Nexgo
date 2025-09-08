@@ -39,9 +39,14 @@
               <img src="{{ asset('images/new-logo.png') }}" class="img-fluid logo">
             </div>
           </div>
-
+           @if(session('error'))
+              <div class="alert alert-danger">
+                  {{ session('error') }}
+              </div>
+          @endif
           <div class="col-lg-6 bg-white px-5 py-5">
           <x-language-switcher />
+
 
             <div class="card-body login-form px-5 py-5">
               <div class="text-center">
@@ -56,7 +61,7 @@
                 <div class="form-group">
                   <label for="email">{{ __('auth.email_address') }} *</label>
                   <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                    value="{{ old('email') }}" autocomplete="email" autofocus>
+                    value="{{ old('email') }}" autocomplete="email" autofocus required>
 
                   @error('email')
                   <span class="invalid-feedback" role="alert">
@@ -67,7 +72,7 @@
 
                 <div class="text-center mt-3">
                   <button type="submit" class="btn btn-primary btn-block enter-btn">
-                    {{ __('auth.send_password_reset_link') }}
+                    Send OTP
                   </button>
                 </div>
 

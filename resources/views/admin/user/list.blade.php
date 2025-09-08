@@ -85,7 +85,7 @@
                                 <tr id="{{ $user->user_id }}">
                                     <td class="py-1">
                                         <img class="img-lg rounded-circle"
-                                            src="{{ $user->profile_picture ? url('/storage/users/' . $user->profile_picture) : asset('/admin/images/user-image.webp') }}"
+                                            src="{{ $user->profile_picture ? $user->profile_picture : asset('/admin/images/user-image.webp') }}"
                                             alt="User profile picture">
                                     </td>
                                     <td class="vehicle-modal" style="width: 300px;">{{ $user->first_name ?? '-' }} {{ $user->last_name }}</td>
@@ -160,7 +160,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/user/delete/" + user_id,
+                  url: "{{ route('admin.user.delete', ['id' => '__id__']) }}".replace('__id__', user_id),
+
                     type: "GET",
                     success: function(response) {
                         if (response.status == "success") {
@@ -179,6 +180,7 @@
         var status = $(this).data('value');
         var action = (status == 1) ? 0 : 1;
         var id = $(this).data('id');
+         var user_id = $(this).data('id');
 
         Swal.fire({
             title: "{{ __('admin.confirm_status_change') }}",
@@ -191,7 +193,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/user/changeStatus",
+                    url: "{{ route('admin.user.changeStatus', ['id' => '__id__']) }}".replace('__id__', user_id),
                     type: "GET",
                     data: { id: id, status: action },
                     success: function(response) {
