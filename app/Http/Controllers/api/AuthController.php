@@ -34,7 +34,22 @@ class AuthController extends Controller
         ]);
 
         $validator = Validator::make($request->all(), [
-            'email' => 'nullable|email|max:255|required_without:phone_number|unique:users,email',
+            'email' => [
+    'nullable',
+    'email',
+    'max:255',
+    'required_without:phone_number',
+    function ($attribute, $value, $fail) {
+        if ($value) {
+            $existingUser = \App\Models\User::where('email', $value)->first();
+
+            if ($existingUser && $existingUser->email_verified_at) {
+                // If already verified, block
+                $fail('This email is already verified and in use.');
+            }
+        }
+    }
+],
             'phone_number' => 'nullable|string|max:15|required_without:email|unique:users,phone_number',
             'country_code' => 'nullable|required_with:phone_number',
             'country_short' => 'nullable|required_with:phone_number',
@@ -297,6 +312,22 @@ class AuthController extends Controller
         }
 
          if($request->email){
+         
+         	 $existingVerified = User::where('email', $request->email)
+		->whereNotNull('email_verified_at')
+		->where('user_id', '!=', $request->user_id)
+		->exists();
+
+	    if ($existingVerified) {
+		return $this->apiResponse('error', 422, 'This email is already verified and in use.');
+	    }
+
+	    // Remove from any other unverified user
+	    User::where('email', $request->email)
+		->whereNull('email_verified_at')
+		->where('user_id', '!=', $request->user_id)
+		->update(['email' => null]);
+         
                  $user->update([
                 'email'=>$request->email,
                 'email_verified_at' => now()
@@ -462,7 +493,7 @@ class AuthController extends Controller
     
             // Step 4: Save OTP
             OtpManagement::updateOrCreate(
-                ['email' => $user->email, 'phone_number' => $user->phone_number],
+                ['user_id' => $user->user_id,'email' => $user->email, 'phone_number' => $user->phone_number],
                 ['otp' => $otp,'country_code' => $user->country_code]
             );
     
@@ -791,10 +822,18 @@ class AuthController extends Controller
                 'last_name'     => 'required|string',
                 'dob'           => 'required|date',
                 'email'         => [
-                    'nullable',
-                    'email',
-                    Rule::unique('users')->ignore(Auth::user()->user_id, 'user_id'), // unique except current user
-                ],
+				    'nullable',
+				    'email',
+				    function ($attribute, $value, $fail) use ($user_id) {
+					$exists = User::where('email', $value)
+					    ->where('user_id', '!=', $user_id)
+					    ->whereNotNull('email_verified_at') // only block verified ones
+					    ->exists();
+					if ($exists) {
+					    $fail('The email has already been taken.');
+					}
+				    },
+				],
                 'phone_number'  => [
                     'nullable',
                     'numeric',
@@ -1557,9 +1596,5 @@ public function testSendSms()
         ], 500);
     }
 }
-
-
-
-
 
 }
