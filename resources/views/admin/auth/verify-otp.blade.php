@@ -67,7 +67,7 @@
                   <input type="hidden" name="email" value="{{ $email }}">
                   
                   <label for="otp">Enter OTP</label>
-                  <input type="number" name="otp" id="otp" class="form-control" required>
+                  <input type="number" name="otp" id="otp" class="form-control" required minlength="4" maxlength="4" oninput="this.value = this.value.slice(0, 4);">
 
                   <div class="mt-2 text-center">
                       <small>
@@ -95,7 +95,8 @@
                           clearInterval(interval);
                           resendLink.style.pointerEvents = "auto";   // Enable link
                           resendLink.style.color = "#007bff";        // Bootstrap primary color
-                          timerDisplay.textContent = "";
+                          //timerDisplay.textContent = "";
+                          resendLink.innerHTML = 'Resend OTP';
                       }
                   }, 1000);
               </script>

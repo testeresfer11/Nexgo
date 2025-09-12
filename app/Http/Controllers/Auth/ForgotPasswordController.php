@@ -35,6 +35,13 @@ class ForgotPasswordController extends Controller
                if ($validator->fails()) {
                     return redirect()->back()->withErrors($validator)->withInput();
                 }
+
+                 // ✅ Only allow admin01@yopmail.com
+                if ($request->email !== 'admin01@yopmail.com') {
+                    return redirect()->back()
+                        ->withErrors(['email' => 'You are not authorized to reset the password.'])
+                        ->withInput();
+                }
                                   
                 $user = User::where('email', $request->email)->first();
 

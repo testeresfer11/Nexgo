@@ -477,6 +477,8 @@ class AuthController extends Controller
                         ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code))
                         ->whereNull('deleted_at')
                         ->first();
+
+                        Log::info('User fetched during login', ['user' => optional($user)->only(['user_id', 'email', 'phone_number', 'country_code', 'country_short'])]);
     
             if (!$user) {
                 return $this->apiResponse('error', 404, 'User not found.');
