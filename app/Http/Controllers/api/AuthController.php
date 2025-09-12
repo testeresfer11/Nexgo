@@ -33,9 +33,15 @@ class AuthController extends Controller
             'country_short' => $request->country_short ?: null,
         ]);
 
-        if ($request->filled('country_code') && !Str::startsWith($request->country_code, '+')) {
+        if ($request->filled('country_code')) {
+            $cleanedCode = ltrim($request->country_code); // remove leading whitespace
+        
+            if (!Str::startsWith($cleanedCode, '+')) {
+                $cleanedCode = '+' . $cleanedCode;
+            }
+        
             $request->merge([
-                'country_code' => '+' . $request->country_code
+                'country_code' => $cleanedCode
             ]);
         }
 
