@@ -473,10 +473,26 @@ class AuthController extends Controller
 
     
             // Step 2: Fetch user by email or phone
-            $user = User::when($request->email, fn($q) => $q->where('email', $request->email))
-                        ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code))
-                        ->whereNull('deleted_at')
-                        ->first();
+            // $user = User::when($request->email, fn($q) => $q->where('email', $request->email))
+            //             ->when($request->phone_number, fn($q) => $q->where('phone_number', $request->phone_number)->where('country_code', $request->country_code))
+            //             ->whereNull('deleted_at')
+            //             ->first();
+
+            $user = User::whereNull('deleted_at')
+            ->where(function ($query) use ($request) {
+                if ($request->filled('email')) {
+                    $query->orWhere('email', $request->email);
+                }
+                if ($request->filled('phone_number')) {
+                    $query->orWhere(function ($q) use ($request) {
+                        $q->where('phone_number', $request->phone_number);
+                        if ($request->filled('country_code')) {
+                            $q->where('country_code', $request->country_code);
+                        }
+                    });
+                }
+            })
+            ->first();
     
             if (!$user) {
                 return $this->apiResponse('error', 404, 'User not found.');
