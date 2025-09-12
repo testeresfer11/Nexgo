@@ -33,6 +33,12 @@ class AuthController extends Controller
             'country_short' => $request->country_short ?: null,
         ]);
 
+        if ($request->filled('country_code') && !Str::startsWith($request->country_code, '+')) {
+            $request->merge([
+                'country_code' => '+' . $request->country_code
+            ]);
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => [
     'nullable',
