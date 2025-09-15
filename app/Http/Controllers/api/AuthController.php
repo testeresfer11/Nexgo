@@ -34,12 +34,10 @@ class AuthController extends Controller
         ]);
 
         if ($request->filled('country_code')) {
-            $cleanedCode = ltrim($request->country_code); // remove leading whitespace
-        
-            if (!Str::startsWith($cleanedCode, '+')) {
-                $cleanedCode = '+' . $cleanedCode;
-            }
-        
+            $cleanedCode = preg_replace('/\s+/', '', $request->country_code); // Remove all spaces
+            $cleanedCode = ltrim($cleanedCode, '+'); // Remove existing +
+            $cleanedCode = '+' . $cleanedCode; // Ensure + is prepended
+
             $request->merge([
                 'country_code' => $cleanedCode
             ]);
