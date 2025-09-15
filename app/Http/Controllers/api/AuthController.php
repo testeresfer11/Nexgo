@@ -33,16 +33,6 @@ class AuthController extends Controller
             'country_short' => $request->country_short ?: null,
         ]);
 
-        if ($request->filled('country_code')) {
-            $cleanedCode = preg_replace('/\s+/', '', $request->country_code); // Remove all spaces
-            $cleanedCode = ltrim($cleanedCode, '+'); // Remove existing +
-            $cleanedCode = '+' . $cleanedCode; // Ensure + is prepended
-
-            $request->merge([
-                'country_code' => $cleanedCode
-            ]);
-        }
-
         $validator = Validator::make($request->all(), [
             'email' => [
     'nullable',
@@ -290,6 +280,16 @@ class AuthController extends Controller
             'otp'   => 'required|numeric',
             'user_id'   => 'required'
         ]);
+
+        if ($request->filled('country_code')) {
+            $cleanedCode = preg_replace('/\s+/', '', $request->country_code); // Remove all spaces
+            $cleanedCode = ltrim($cleanedCode, '+'); // Remove existing +
+            $cleanedCode = '+' . $cleanedCode; // Ensure + is prepended
+
+            $request->merge([
+                'country_code' => $cleanedCode
+            ]);
+        }
 
         if ($validator->fails()) {
             return $this->apiResponse('error', 422, $validator->errors()->first());
