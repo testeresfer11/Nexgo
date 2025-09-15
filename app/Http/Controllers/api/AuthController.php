@@ -453,6 +453,16 @@ class AuthController extends Controller
                 'country_code' => 'nullable|required_with:phone_number',
             ]);
 
+            if ($request->filled('country_code')) {
+                $cleanedCode = preg_replace('/\s+/', '', $request->country_code); // Remove all spaces
+                $cleanedCode = ltrim($cleanedCode, '+'); // Remove existing +
+                $cleanedCode = '+' . $cleanedCode; // Ensure + is prepended
+    
+                $request->merge([
+                    'country_code' => $cleanedCode
+                ]);
+            }
+
             $validator->after(function ($validator) use ($request) {
                 // Require at least email or phone
                 if (!$request->filled('email') && !$request->filled('phone_number')) {
