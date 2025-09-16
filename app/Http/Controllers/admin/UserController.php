@@ -163,7 +163,7 @@ public function deletedUser(Request $request){
                     'date',
                     'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
                 ],
-                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'dob.before_or_equal' => 'User must be at least 18 years old.',
             ]);
@@ -341,7 +341,7 @@ public function edit(Request $request, $id)
                     'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
                 ],
                 'phone_number' => 'nullable|numeric|digits_between:8,15|unique:users,phone_number,' . $id . ',user_id',
-                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'dob.before_or_equal' => 'User must be at least 18 years old.',
             ]);
