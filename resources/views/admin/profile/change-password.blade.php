@@ -47,7 +47,7 @@
                     <div class="form-group">
 
                       <label for="password" class=" col-form-label">New Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password-field" placeholder="{{ __('admin.new_password') }}" name="password">
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password-field" placeholder="{{ __('admin.new_password') }}" name="password" pattern=".*[@$!%*#?&].*" title="Password must include at least one special character (@, $, !, %, *, #, ?, &)">
                         <i class="toggle-password fa fa-eye-slash eye-icon" toggle="#password-field" ></i>
                         @error('password')
                             <span class="invalid-feedback">
