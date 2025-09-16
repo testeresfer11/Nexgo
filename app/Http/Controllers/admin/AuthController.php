@@ -120,8 +120,11 @@ class AuthController extends Controller
             }elseif( $request->isMethod('post') ){
                 $validator = Validator::make($request->all(), [
                     'current_password'  => 'required|min:8',
-                    "password" => "required|confirmed|min:8",
+                    "password" => "required|confirmed|min:8|regex:/[@$!%*#?&]/",
                     "password_confirmation" => "required",
+                ],
+                [
+                    'password.regex' => 'Password must include at least one special character (@, $, !, %, *, #, ?, &).',
                 ]);
                 if ($validator->fails()) {
                     if($request->ajax()){
