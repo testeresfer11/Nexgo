@@ -98,6 +98,20 @@
                     </div>
 
                     <script>
+                        const input = document.getElementById('profile_picture');
+
+                        input.addEventListener('invalid', function(event) {
+                        event.preventDefault();  // Prevent default browser message
+                        if (!input.validity.valid) {
+                            input.setCustomValidity('Please select an image');
+                            input.reportValidity();
+                        }
+                        });
+
+                        input.addEventListener('input', function(event) {
+                        input.setCustomValidity('');  // Reset the custom message on input
+                        });
+
                         function previewProfile(event) {
                             const previewContainer = document.getElementById('preview_container');
                             const previewImg = document.getElementById('preview_img');
