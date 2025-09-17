@@ -49,7 +49,7 @@
 
                     <div class="form-group">
                         <label>{{ __('admin.profile_upload') }}</label>
-                        <input type="file" name="profile_picture" id="profileInput" class="form-control" accept="image/*">
+                        <input type="file" name="profile_picture" id="profileInput" class="form-control" accept=".jpg,.jpeg,.png">
 
                         {{-- Show existing profile picture if available --}}
                         @if($user->profile_picture)

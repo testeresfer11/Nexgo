@@ -87,7 +87,7 @@
                         <!-- Profile Picture -->
                         <div class="col-md-6">
                             <label for="profile_picture">Profile Picture</label>
-                            <input type="file" id="profile_picture" name="profile_picture" class="form-control file-upload-info" accept="image/*" onchange="previewProfile(event)">
+                            <input type="file" id="profile_picture" name="profile_picture" class="form-control file-upload-info" accept=".jpg,.jpeg,.png" onchange="previewProfile(event)">
                             <br>
                             <!-- Preview Container (hidden by default) -->
                             <div id="preview_container" style="display:none; margin-top:10px;">
