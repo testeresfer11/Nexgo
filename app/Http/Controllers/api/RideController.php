@@ -2059,11 +2059,12 @@ class RideController extends Controller
                 'report_id' => $request->report_id,
                 'description' => $request->description,
             ]);
-            Mail::send('emails.complaint_recived', ['user' => $driver, 'report' => $Reports], function ($message) use ($driver_email) {
-                $message->to($driver_email)
-                  ->subject("We've received a complaint regarding your ride");
-
-            });
+            if (!empty($driver_email)) {
+                Mail::send('emails.complaint_recived', ['user' => $driver, 'report' => $Reports], function ($message) use ($driver_email) {
+                    $message->to($driver_email)
+                      ->subject("We've received a complaint regarding your ride");
+                });
+            }
 
             return $this->apiResponse('success', 200, 'Your report has been created', $Reports);
         } catch (\Exception $e) {
